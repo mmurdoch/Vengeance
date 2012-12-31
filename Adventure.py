@@ -1,3 +1,1 @@
-print 'adventure!'
-print 'oh no!'
-print 'oh yes!'
+6b1e752950ab7eb43efb13e8666f219449a76cf6
