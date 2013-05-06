@@ -3,24 +3,34 @@ import sys
 
 class Room:
     def __init__(self, name, description):
-        self.exits = []
-        self.name = name
-        self.description = description
+        self._commands = []
+        self._exits = []
+        self._name = name
+        self._description = description
         
-    def add_exit(self, exit):
-        self.exits.append(exit)
-        
-    def __str__(self):
-        string = self.name
-        string += ":\n"
-        string += "Exits:\n"
-        if (len(self.exits) == 0):
-            string += "[None]"
-        else:
-            for exit in self.exits:
-                string += exit.name
-       
-        return string
+    def add_exit(self, direction, room):
+        self.add_one_way_exit(direction, room)
+        room.add_one_way_exit(direction.opposite, self)
+    
+    def add_one_way_exit(self, direction, room):
+        self._exits.append(Exit(direction.name, room))
+        self._commands.append(Command(direction.name, Player.move_to, room))
+
+    @property
+    def commands(self):
+        return self._commands
+
+    @property
+    def exits(self):
+        return self._exits
+    
+    @property
+    def name(self):
+        return self._name
+    
+    @property
+    def description(self):
+        return self._description
 
 class Exit:
     def __init__(self, direction, to_room):
@@ -28,16 +38,20 @@ class Exit:
         self.to_room = to_room
 
 class Command:
-    def __init__(self, name, func):
+    def __init__(self, name, func, context):
         self._name = name
         self._func = func
+        self._context = context
     
     @property
     def name(self):
         return self._name
 
-    def run(self):
-        self._func()
+    def matches(self, value):
+        return self.name == value
+
+    def run(self, player):
+        self._func(player, self._context)
 
 class Player:
     def __init__(self, current_room):
@@ -50,32 +64,31 @@ class Player:
     def move_to(self, room):
         self._current_room = room
 
+def quit_game(player, context):
+    print("Are you sure you want to quit?")
+    quit_input = raw_input()
+    if quit_input == "y" or quit_input == "yes":
+        sys.exit()
+
 class Game:
     def __init__(self, starting_room):
-        self.starting_room = starting_room
-        self.commands = []
+        self.player = Player(starting_room)
+        self._commands = []
+        self.add_command(Command("quit", quit_game, None))
 
     def add_command(self, command):
-        self.commands.append(command)
+        self._commands.append(command)
 
     def run(self):
-        player = Player(self.starting_room)
         while (True):
-            self.display_room(player.current_room)
-            user_input = self.get_input()
-            for command in self.commands:
-                if user_input == command.name:
-                    command.run()
-            room = player.current_room
-            for exit in room.exits:
-                if user_input == exit.direction:
-                    player.move_to(exit.to_room)
+            self._display_room(self.player.current_room)
+            self._process_command(self._get_input())
 
-    def display_room(self, room):
+    def _display_room(self, room):
         title = room.name
         title += " (exits: "
         if len(room.exits) == 0:
-            title += "<none>"
+            title += "<none> "
         for exit in room.exits:
             title += exit.direction
             title += " "
@@ -84,25 +97,105 @@ class Game:
         print(title)
         print(room.description)
 
-    def get_input(self):
+    def _get_input(self):
         return raw_input()
+        
+    def _process_command(self, user_input):
+        for command in self._commands:
+            if command.matches(user_input):
+                command.run(self.player)
+        
+        room = self.player.current_room
+        for command in room.commands:
+            if command.matches(user_input):
+                command.run(self.player)
 
-hole = Room("Hole", "A wet, dirty great pit in the ground")
-big_dusty_field = Room("Big Dusty Field", 
-    "Has the distinct odour of dried-up cow pats...")
-the_void = Room("The Void", "An empty space, devoid of life")
+class Direction:
+    def __init__(self, name):
+        self._name = name
 
-hole.add_exit(Exit("up", big_dusty_field))
-big_dusty_field.add_exit(Exit("down", hole))
-big_dusty_field.add_exit(Exit("up", the_void))
+    @property
+    def name(self):
+        return self._name
 
-game = Game(hole)
+    @property
+    def opposite(self):
+        return self._opposite
+        
+    @opposite.setter
+    def opposite(self, value):
+        self._opposite = value
 
-def quit_game():
-    print("Are you sure you want to quit?")
-    quit_input = raw_input()
-    if quit_input == "y" or quit_input == "yes":
+direction_data = [
+    {"name": "up", "opposite": "down"},
+    {"name": "north", "opposite": "south"},
+    {"name": "west", "opposite": "east"},
+    {"name": "north west", "opposite": "south east"},
+    {"name": "north east", "opposite": "south west"}
+]
+
+room_data = [
+    {"name": "Big Dusty Field", "description": "Has the distinct odour of dried-up cowpats..."},
+    {"name": "Hole", "description": "A wet, dirty great pit in the ground"},
+    {"name": "The Void", "description": "An empty space, devoid of life"}
+]
+
+exit_data = [
+    {"from": "Big Dusty Field", "to": "Hole", "direction": "down", "one_way": True},
+    {"from": "Big Dusty Field", "to": "The Void", "direction": "up"}
+]
+
+directions = []
+for datum in direction_data:
+    direction = Direction(datum["name"])
+    opposite_direction = Direction(datum["opposite"])
+    direction.opposite = opposite_direction
+    opposite_direction.opposite = direction    
+    directions.append(direction)
+    directions.append(opposite_direction)
+
+rooms = []
+for datum in room_data:
+    room = Room(datum["name"], datum["description"])
+    rooms.append(room)
+
+for datum in exit_data:
+    from_name = datum["from"]
+    to_name = datum["to"]
+    direction_name = datum["direction"]
+    if "one_way" in datum:
+        one_way = datum["one_way"]
+    else:
+        one_way = False
+    
+    from_room = None
+    to_room = None
+    for room in rooms:
+        if room.name == from_name:
+            from_room = room
+        elif room.name == to_name:
+            to_room = room
+
+    connected_rooms = [from_room, to_room]
+    for connected_room in connected_rooms:
+        if connected_room == None:
+            print("Unknown room in connection between '" + from_name + "' and '" + to_name + "'")
+            sys.exit()
+
+    exit = None
+    for direction in directions:
+        if direction.name == direction_name:
+            exit = direction
+    if exit == None:
+        print("Unknown direction '" + direction_name + "'")
         sys.exit()
 
-game.add_command(Command("quit", quit_game))
+    add_exit_func = None
+    if one_way:
+        add_exit_func = Room.add_one_way_exit
+    else:
+        add_exit_func = Room.add_exit
+    add_exit_func(from_room, exit, to_room)
+
+game = Game(rooms[0])
 game.run()
