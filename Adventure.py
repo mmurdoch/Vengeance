@@ -22,7 +22,8 @@ class Homestead:
 print("Homestead")
 print()
 print("Waking from a deep and dreamless sleep, you slowly open your eyes")
-print("and focus on the bright light set in the white ceiling over your head.")
+print("and focus on the bright light set in the center of the white")
+print("ceiling over your head.")
 print("Pulling yourself up, you sit on the edge of the bed and take stock")
 print("of your surroundings.")
 print("Apart from the bed the room is largely empty. There is a door in")
@@ -40,7 +41,7 @@ while True:
         print("surface it emits a faint glow and then this appears:")
         print()
         print(" |    Welcome to Homestead 9000")
-        print(" | Your complete automation system")
+        print(" | The complete automation system")
         print(" | ")
         print(" | This is bedroom 3")
     elif input == "curses":
