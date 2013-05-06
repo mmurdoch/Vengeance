@@ -126,25 +126,6 @@ class Direction:
     def opposite(self, value):
         self._opposite = value
 
-direction_data = [
-    {"name": "up", "opposite": "down"},
-    {"name": "north", "opposite": "south"},
-    {"name": "west", "opposite": "east"},
-    {"name": "north west", "opposite": "south east"},
-    {"name": "north east", "opposite": "south west"}
-]
-
-room_data = [
-    {"name": "Big Dusty Field", "description": "Has the distinct odour of dried-up cowpats..."},
-    {"name": "Hole", "description": "A wet, dirty great pit in the ground"},
-    {"name": "The Void", "description": "An empty space, devoid of life"}
-]
-
-exit_data = [
-    {"from": "Big Dusty Field", "to": "Hole", "direction": "down", "one_way": True},
-    {"from": "Big Dusty Field", "to": "The Void", "direction": "up"}
-]
-
 directions = []
 for datum in direction_data:
     direction = Direction(datum["name"])

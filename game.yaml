@@ -1,0 +1,28 @@
+directions:
+    - name: up
+      opposite: down
+    - name: north
+      opposite: south
+    - name: west
+      opposite: east
+    - name: north west
+      opposite: south east
+    - name: north east
+      opposite: south west
+
+rooms:
+    - name: Big Dusty Field
+      description: Has the distinct odour of dried-up cowpats
+    - name: Hole
+      description: "A wet, dirty great pit in the ground"
+    - name: The Void
+      description: "An empty space, devoid of life"
+
+exits:
+    - from: Big Dusty Field
+      to: Hole
+      direction: down
+      one_way: True
+    - from: Big Dusty Field
+      to: The Void
+      direction: up
