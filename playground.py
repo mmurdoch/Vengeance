@@ -126,6 +126,19 @@ class Direction:
     def opposite(self, value):
         self._opposite = value
 
+direction_data = [
+    { 'name': 'up', 'opposite': 'down' }
+]
+
+room_data = [
+    { 'name': 'A Church', 'description': 'Tiny place of worship'},
+    { 'name': 'The Crypt', 'description': 'Dusty tomb filled with empty sarcophagi'}
+]
+
+exit_data = [
+    { 'from': 'A Church', 'to': 'The Crypt', 'direction': 'down'}
+]
+
 directions = []
 for datum in direction_data:
     direction = Direction(datum["name"])
@@ -178,5 +191,6 @@ for datum in exit_data:
         add_exit_func = Room.add_exit
     add_exit_func(from_room, exit, to_room)
 
-game = Game(rooms[0])
-game.run()
+if len(rooms) > 0:
+    game = Game(rooms[0])
+    game.run()
