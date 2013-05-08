@@ -14,7 +14,9 @@ class Room:
     
     def add_one_way_exit(self, direction, room):
         self._exits.append(Exit(direction.name, room))
-        self._commands.append(Command(direction.name, Player.move_to, room))
+        exit_command = Command(direction.name, Player.move_to, room)
+        exit_command.add_synonym(direction.name[0])
+        self._commands.append(exit_command)
 
     @property
     def commands(self):
@@ -40,6 +42,7 @@ class Exit:
 class Command:
     def __init__(self, name, func, context):
         self._name = name
+        self._synonyms = []
         self._func = func
         self._context = context
     
@@ -47,7 +50,14 @@ class Command:
     def name(self):
         return self._name
 
+    def add_synonym(self, synonym):
+    	self._synonyms.append(synonym)
+
     def matches(self, value):
+        for synonym in self._synonyms:
+            if synonym == value:
+                return True
+
         return self.name == value
 
     def run(self, player):
