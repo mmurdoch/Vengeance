@@ -136,18 +136,25 @@ class Direction:
     def opposite(self, value):
         self._opposite = value
 
-direction_data = [
-    { 'name': 'up', 'opposite': 'down' }
-]
+game_data = {
+    'directions': [
+        { 'name': 'up', 'opposite': 'down' }
+    ],
+    'rooms': [
+        { 'name': 'A Church', 'description': 'Tiny place of worship'},
+        { 'name': 'The Crypt', 'description': 'Dusty tomb filled with empty sarcophagi'}
+    ],
+    # Why can't this be with room data?
+    'exits': [
+        { 'from': 'A Church', 'to': 'The Crypt', 'direction': 'down'}
+    ]
+}
 
-room_data = [
-    { 'name': 'A Church', 'description': 'Tiny place of worship'},
-    { 'name': 'The Crypt', 'description': 'Dusty tomb filled with empty sarcophagi'}
-]
+direction_data = game_data['directions']
 
-exit_data = [
-    { 'from': 'A Church', 'to': 'The Crypt', 'direction': 'down'}
-]
+room_data = game_data['rooms']
+
+exit_data = game_data['exits']
 
 directions = []
 for datum in direction_data:
