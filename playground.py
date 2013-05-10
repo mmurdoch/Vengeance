@@ -141,20 +141,19 @@ game_data = {
         { 'name': 'up', 'opposite': 'down' }
     ],
     'rooms': [
-        { 'name': 'A Church', 'description': 'Tiny place of worship'},
-        { 'name': 'The Crypt', 'description': 'Dusty tomb filled with empty sarcophagi'}
+        { 'name': 'A Church', 
+          'description': 'Tiny place of worship',
+          'exits': [
+              { 'to': 'The Crypt', 'direction': 'down' }
+           ] },
+        { 'name': 'The Crypt',
+          'description': 'Dusty tomb filled with empty sarcophagi' }
     ],
-    # Why can't this be with room data?
-    'exits': [
-        { 'from': 'A Church', 'to': 'The Crypt', 'direction': 'down'}
-    ]
 }
 
 direction_data = game_data['directions']
 
 room_data = game_data['rooms']
-
-exit_data = game_data['exits']
 
 directions = []
 for datum in direction_data:
@@ -166,9 +165,18 @@ for datum in direction_data:
     directions.append(opposite_direction)
 
 rooms = []
+exit_data = []
 for datum in room_data:
-    room = Room(datum["name"], datum["description"])
+    room_name = datum['name']
+    room = Room(room_name, datum['description'])
     rooms.append(room)
+    
+    if 'exits' in datum:
+        for exit in datum['exits']:
+            exit_datum = {
+                'from': room_name, 'to': exit['to'], 'direction': exit['direction']
+            }
+            exit_data.append(exit_datum)
 
 for datum in exit_data:
     from_name = datum["from"]
@@ -190,7 +198,7 @@ for datum in exit_data:
     connected_rooms = [from_room, to_room]
     for connected_room in connected_rooms:
         if connected_room == None:
-            print("Unknown room in connection between '" + from_name + "' and '" + to_name + "'")
+            print("Unknown exit room '" + to_name + "' from '" + from_name + "'")
             sys.exit()
 
     exit = None
