@@ -151,12 +151,8 @@ game_data = {
     ],
 }
 
-direction_data = game_data['directions']
-
-room_data = game_data['rooms']
-
 directions = []
-for datum in direction_data:
+for datum in game_data['directions']:
     direction = Direction(datum["name"])
     opposite_direction = Direction(datum["opposite"])
     direction.opposite = opposite_direction
@@ -166,17 +162,17 @@ for datum in direction_data:
 
 rooms = []
 exit_data = []
-for datum in room_data:
-    room_name = datum['name']
-    room = Room(room_name, datum['description'])
+for room_datum in game_data['rooms']:
+    room_name = room_datum['name']
+    room = Room(room_name, room_datum['description'])
     rooms.append(room)
     
-    if 'exits' in datum:
-        for exit in datum['exits']:
-            exit_datum = {
-                'from': room_name, 'to': exit['to'], 'direction': exit['direction']
-            }
-            exit_data.append(exit_datum)
+    room_datum.setdefault('exits', [])
+    for exit in room_datum['exits']:
+        exit_datum = {
+            'from': room_name, 'to': exit['to'], 'direction': exit['direction']
+        }
+        exit_data.append(exit_datum)
 
 for datum in exit_data:
     from_name = datum["from"]
