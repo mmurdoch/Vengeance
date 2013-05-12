@@ -1,2 +1,4 @@
 .DS_Store
 adventure.tmproj
+.ropeproject
+*.pyc
