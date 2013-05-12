@@ -77,6 +77,7 @@ class Game:
             if command.matches(user_input):
                 command.run(self)
 
+
 def display_room(room):
     """
     Displays room information to the user.
@@ -94,6 +95,7 @@ def display_room(room):
     title += ")"
     print(title)
     print(room.description)
+
 
 def get_input():
     """

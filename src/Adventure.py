@@ -5,6 +5,7 @@ from Direction import Direction
 from Game import Game
 from Room import Room
 
+
 def create_directions(direction_data):
     """
     Creates the directions in the game.
