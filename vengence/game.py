@@ -2,8 +2,8 @@ from __future__ import print_function
 
 import sys
 
-from Command import Command
-from Player import Player
+from command import Command
+from player import Player
 
 
 class Game:

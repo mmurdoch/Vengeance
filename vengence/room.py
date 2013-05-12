@@ -1,6 +1,6 @@
-from Command import Command
-from Exit import Exit
-from Game import Game
+from command import Command
+from exit import Exit
+from game import Game
 
 
 class Room:

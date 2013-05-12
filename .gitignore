@@ -2,3 +2,6 @@
 adventure.tmproj
 .ropeproject
 *.pyc
+build
+dist
+Vengence.egg-info

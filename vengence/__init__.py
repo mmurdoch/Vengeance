@@ -1,9 +1,9 @@
 """
 A playground in which to try out text adventure ideas.
 """
-from Direction import Direction
-from Game import Game
-from Room import Room
+from direction import Direction
+from game import Game
+from room import Room
 
 
 def create_directions(direction_data):

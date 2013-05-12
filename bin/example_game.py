@@ -1,6 +1,6 @@
-import adventure
+import vengence
 
-run_game({
+vengence.run_game({
     'directions': [
         {'name': 'up', 'opposite': 'down'},
         {'name': 'in', 'opposite': 'out'},
