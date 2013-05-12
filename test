@@ -1,0 +1,2 @@
+python setup.py install
+python vengence/test/__init___test.py
