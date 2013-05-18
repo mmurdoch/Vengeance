@@ -2,11 +2,11 @@ from __future__ import print_function
 
 import sys
 
-from command import Command
-from player import Player
+from _command import _Command
+from _player import _Player
 
 
-class Game:
+class _Game:
     """
     An adventure game.
     """
@@ -16,9 +16,9 @@ class Game:
 
         starting_room: The room in which the player will start
         """
-        self._player = Player(starting_room)
+        self._player = _Player(starting_room)
         self._commands = []
-        self.add_command(Command("quit", Game.quit, self))
+        self.add_command(_Command("quit", _Game.quit, self))
 
     def add_command(self, command):
         """

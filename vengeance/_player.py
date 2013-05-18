@@ -1,4 +1,4 @@
-class Player:
+class _Player:
     """
     A player of a game.
     """

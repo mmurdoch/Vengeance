@@ -1,7 +1,5 @@
 .DS_Store
-adventure.tmproj
-.ropeproject
 *.pyc
 build
 dist
-Vengence.egg-info
+Vengeance.egg-info

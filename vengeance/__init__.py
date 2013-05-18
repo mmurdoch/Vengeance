@@ -1,12 +1,12 @@
 """
-A playground in which to try out text adventure ideas.
+Initializes vengeance.
 """
-from direction import Direction
-from game import Game
-from room import Room
+from _direction import _Direction
+from _game import _Game
+from _room import _Room
 
 
-def create_directions(direction_data):
+def _create_directions(direction_data):
     """
     Creates the directions in the game.
 
@@ -14,8 +14,8 @@ def create_directions(direction_data):
     """
     directions = []
     for datum in direction_data:
-        direction = Direction(datum["name"])
-        opposite_direction = Direction(datum["opposite"])
+        direction = _Direction(datum["name"])
+        opposite_direction = _Direction(datum["opposite"])
         direction.opposite = opposite_direction
         opposite_direction.opposite = direction
         directions.append(direction)
@@ -24,7 +24,7 @@ def create_directions(direction_data):
     return directions
 
 
-def create_rooms(room_data):
+def _create_rooms(room_data):
     """
     Creates the rooms in the game.
 
@@ -33,13 +33,13 @@ def create_rooms(room_data):
     rooms = []
     for room_datum in room_data:
         room_name = room_datum['name']
-        room = Room(room_name, room_datum['description'])
+        room = _Room(room_name, room_datum['description'])
         rooms.append(room)
 
     return rooms
 
 
-def create_exit_data(room_data):
+def _create_exit_data(room_data):
     """
     Creates exit data for the game.
 
@@ -62,7 +62,7 @@ def create_exit_data(room_data):
     return exit_data
 
 
-def find_room(name, rooms):
+def _find_room(name, rooms):
     """
     Finds a room by name.
 
@@ -78,7 +78,7 @@ def find_room(name, rooms):
     return None
 
 
-def add_exits(rooms, directions, exit_data):
+def _add_exits(rooms, directions, exit_data):
     """
     Adds exits to rooms.
 
@@ -88,9 +88,9 @@ def add_exits(rooms, directions, exit_data):
     """
     for datum in exit_data:
         from_name = datum['from']
-        from_room = find_room(from_name, rooms)
+        from_room = _find_room(from_name, rooms)
         to_name = datum['to']
-        to_room = find_room(to_name, rooms)
+        to_room = _find_room(to_name, rooms)
         if to_room is None:
             print('Unknown exit room ' + to_name +
                   ' from ' + from_name + "'")
@@ -108,37 +108,37 @@ def add_exits(rooms, directions, exit_data):
         one_way = datum['one_way']
         add_exit_func = None
         if one_way:
-            add_exit_func = Room.add_one_way_exit
+            add_exit_func = _Room.add_one_way_exit
         else:
-            add_exit_func = Room.add_exit
+            add_exit_func = _Room.add_exit
         add_exit_func(from_room, the_exit, to_room)
 
 
-def load_rooms(game_data):
+def _load_rooms(game_data):
     """
     Loads rooms, and wires up their exits.
 
     game_data: Details of the rooms in the game
     """
-    directions = create_directions(game_data['directions'])
+    directions = _create_directions(game_data['directions'])
     room_data = game_data['rooms']
-    rooms = create_rooms(room_data)
-    exit_data = create_exit_data(room_data)
-    add_exits(rooms, directions, exit_data)
+    rooms = _create_rooms(room_data)
+    exit_data = _create_exit_data(room_data)
+    _add_exits(rooms, directions, exit_data)
 
     return rooms
 
 
-def create_game(game_data):
+def _create_game(game_data):
     """
     Creates a game.
 
     game_data: Details of the rooms in the game
     """
-    rooms = load_rooms(game_data)
+    rooms = _load_rooms(game_data)
 
     if len(rooms) > 0:
-        return Game(rooms[0])
+        return _Game(rooms[0])
 
     return None
 
@@ -149,5 +149,5 @@ def run_game(game_data):
 
     game_data: Details of the rooms in the game
     """
-    game = create_game(game_data)
+    game = _create_game(game_data)
     game.run()
