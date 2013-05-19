@@ -1,6 +1,6 @@
-import vengence
+import vengeance
 
-vengence.run_game({
+vengeance.run_game({
     'directions': [
         {'name': 'up', 'opposite': 'down'},
         {'name': 'in', 'opposite': 'out'},

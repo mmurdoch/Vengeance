@@ -1,4 +1,4 @@
-class Command:
+class _Command:
     """
     A command which can be given by a user.
 

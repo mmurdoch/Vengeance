@@ -1,9 +1,9 @@
-from command import Command
-from exit import Exit
-from game import Game
+from _command import _Command
+from _exit import _Exit
+from _game import _Game
 
 
-class Room:
+class _Room:
     """
     A room in an adventure game.
     """
@@ -42,8 +42,8 @@ class Room:
         direction: The direction in which the exit resides
         room: The room reached by going through the exit
         """
-        self._exits.append(Exit(direction.name, room))
-        exit_command = Command(direction.name, Game.move_player_to, room)
+        self._exits.append(_Exit(direction.name, room))
+        exit_command = _Command(direction.name, _Game.move_player_to, room)
         exit_command.add_synonym(direction.name[0])
         self._commands.append(exit_command)
 

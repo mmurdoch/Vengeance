@@ -1,7 +1,8 @@
 ========
-Vengence
+Vengeance
 ========
-Vengence is a text-based adventure game engine.
+Vengeance is a text-based adventure game engine created as an exercise in
+Python backward compatibility.
 
 Building and Installing
 =======================

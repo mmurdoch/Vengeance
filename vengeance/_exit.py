@@ -1,4 +1,4 @@
-class Exit:
+class _Exit:
     """
     An exit from a room.
     """

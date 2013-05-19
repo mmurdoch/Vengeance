@@ -1,4 +1,4 @@
-class Direction:
+class _Direction:
     """
     A direction in which movement can be made.
     """
