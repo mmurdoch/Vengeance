@@ -1,3 +1,8 @@
+"""
+A room exit.
+"""
+
+
 class _Exit:
     """
     An exit from a room.

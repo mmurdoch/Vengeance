@@ -1,9 +1,9 @@
 """
 Initializes vengeance.
 """
-from _direction import _Direction
-from _game import _Game
-from _room import _Room
+from vengeance._direction import _Direction
+from vengeance._game import _Game
+from vengeance._room import _Room
 
 
 def _create_directions(direction_data):
@@ -94,7 +94,7 @@ def _add_exits(rooms, directions, exit_data):
         if to_room is None:
             print('Unknown exit room ' + to_name +
                   ' from ' + from_name + "'")
-            sys.exit()
+            #sys.exit()
 
         direction_name = datum['direction']
         the_exit = None
@@ -103,7 +103,7 @@ def _add_exits(rooms, directions, exit_data):
                 the_exit = direction
         if the_exit is None:
             print('Unknown direction ' + direction_name)
-            sys.exit()
+            #sys.exit()
 
         one_way = datum['one_way']
         add_exit_func = None

@@ -1,9 +1,12 @@
+"""
+An adventure game.
+"""
 from __future__ import print_function
 
 import sys
 
-from _command import _Command
-from _player import _Player
+from vengeance._command import _Command
+from vengeance._player import _Player
 
 
 class _Game:

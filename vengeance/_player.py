@@ -1,3 +1,8 @@
+"""
+A game player.
+"""
+
+
 class _Player:
     """
     A player of a game.

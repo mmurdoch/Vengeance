@@ -1,3 +1,8 @@
+"""
+A user command.
+"""
+
+
 class _Command:
     """
     A command which can be given by a user.

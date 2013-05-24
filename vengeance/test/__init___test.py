@@ -17,8 +17,8 @@ class InitTest(unittest.TestCase):
                      {'to': 'Room B', 'direction': 'down', 'one_way': True}
                  ]},
                 {'name': 'Room B',
-                 'description': 'B',
-                }
+                 'description': 'B'
+                 }
             ],
         })
 
