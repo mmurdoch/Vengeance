@@ -3,5 +3,5 @@
 build
 dist
 docs
-sphinx
+sphinx/_build
 Vengeance.egg-info
