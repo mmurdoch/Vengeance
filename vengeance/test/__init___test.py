@@ -1,12 +1,12 @@
 import unittest
 
-import vengence
+import vengeance
 
 
 class InitTest(unittest.TestCase):
 
     def test_one_way_exit(self):
-        rooms = vengence.load_rooms({
+        rooms = vengeance._load_rooms({
             'directions': [
                 {'name': 'up', 'opposite': 'down'},
             ],
@@ -22,9 +22,9 @@ class InitTest(unittest.TestCase):
             ],
         })
 
-        room_a = vengence.find_room('Room A', rooms)
+        room_a = vengeance._find_room('Room A', rooms)
         self.assertEqual(1, len(room_a.exits))
-        room_b = vengence.find_room('Room B', rooms)
+        room_b = vengeance._find_room('Room B', rooms)
         self.assertEqual(0, len(room_b.exits))
 
 if __name__ == '__main__':
