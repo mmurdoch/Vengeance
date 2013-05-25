@@ -12,7 +12,6 @@ fi
 
 python setup.py install
 
-sphinx-apidoc -f -o sphinx vengeance vengeance/_game.py
 cd sphinx
 make clean
 make html
