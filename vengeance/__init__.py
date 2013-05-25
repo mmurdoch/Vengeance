@@ -1,5 +1,5 @@
 """
-Initializes vengeance.
+Vengeance - text adventure game engine.
 """
 from vengeance._direction import _Direction
 from vengeance._game import _Game
