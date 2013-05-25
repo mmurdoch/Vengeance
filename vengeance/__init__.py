@@ -147,7 +147,62 @@ def run_game(game_data):
     """
     Runs a game.
 
-    game_data: Details of the rooms in the game
+    Args:
+      game_data (dict): Details of the rooms in the game
+
+    Returns:
+      None
+
+    ``game_data`` is a dictionary containing two key-value pairs, one with key
+    ``'directions'`` and the other with key ``'rooms'``. Each of these keys
+    has a list as its value.
+
+    The `'directions'` list contains a sequence of dictionaries, each with two
+    key-value pairs: one with key ``'name'`` and the other with key
+    ``'opposite'``. The values of each key are strings which the player can
+    type to move in that direction. All direction ``'name'`` and
+    ``'opposite'`` values must be unique.
+
+    The ``'rooms'`` list also contains a sequence of dictionaries. Each of
+    these dictionaries must contain a ``'name'`` key with a string value. No
+    two rooms can have the same name. Each dictionary must also contain a
+    ``'description'`` key which again must have a string value. In addition,
+    each dictionary may optionally contain an ``'exits'`` key.
+
+    The value of the ``'exits'`` key is (again!) a list of dictionaries which
+    contain a ``'to'`` key (the value of which must be the ``'name'`` of a
+    room) and a ``'direction'`` key (the value of which must contain the
+    ``'name'`` or ``'opposite'`` of a direction). Also, optionally, each
+    dictionary may contain a ``'one_way'`` key, the value of which must be a
+    boolean (the default is ``False``).
+
+    Phew! An example might help::
+
+        vengeance.run_game({
+            'directions': [
+                {'name': 'up', 'opposite': 'down'},
+                {'name': 'in', 'opposite': 'out'},
+                {'name': 'west', 'opposite': 'east'}
+            ],
+            'rooms': [
+                {'name': 'A Church',
+                 'description': 'Tiny place of worship',
+                 'exits': [
+                     {'to': 'The Crypt', 'direction': 'down'}
+                 ]},
+                {'name': 'The Crypt',
+                 'description': 'Dusty tomb filled with empty sarcophagi',
+                 'exits': [
+                     {'to': 'A Coffin', 'direction': 'in', 'one_way': True},
+                     {'to': 'A Cave', 'direction': 'west'}
+                 ]},
+                {'name': 'A Coffin',
+                 'description': 'A tight squeeze and pitch dark'},
+                {'name': 'A Cave',
+                 'description': 'A dark and dingy place'}
+            ],
+        })
+
     """
     game = _create_game(game_data)
     game.run()
