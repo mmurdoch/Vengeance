@@ -2,4 +2,6 @@
 *.pyc
 build
 dist
+docs
+sphinx
 Vengeance.egg-info

@@ -10,5 +10,19 @@ if [ $? -ne 0 ]
     then echo 'PEP8 errors' && exit 1
 fi
 
+rm sphinx/vengeance.rst
+sphinx-apidoc -o sphinx vengeance vengeance/_game.py
+cd sphinx
+make html
+cd ..
+cd docs
+rm -rf *
+cd ..
+cp -R sphinx/_build/html/* docs
+
 python setup.py install
+
 python vengeance/test/__init___test.py
+if [ $? -ne 0 ]
+    then echo 'Tests failed' && exit 1
+fi

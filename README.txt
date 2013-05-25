@@ -14,6 +14,7 @@ To build Vengeance you will need to install:
 
 * Pylint (``pip install pylint``)
 * PEP8 (``pip install pep8``)
+* Sphinx (``pip install Sphinx``)
 
 To build, check, package, install and test Vengeance, run the ``test`` script:
 
