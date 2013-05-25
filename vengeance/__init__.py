@@ -157,8 +157,8 @@ def run_game(game_data):
     ``'directions'`` and the other with key ``'rooms'``. Each of these keys
     has a list as its value.
 
-    The `'directions'` list contains a sequence of dictionaries, each with two
-    key-value pairs: one with key ``'name'`` and the other with key
+    The ``'directions'`` list contains a sequence of dictionaries, each with
+    two key-value pairs: one with key ``'name'`` and the other with key
     ``'opposite'``. The values of each key are strings which the player can
     type to move in that direction. All direction ``'name'`` and
     ``'opposite'`` values must be unique.
