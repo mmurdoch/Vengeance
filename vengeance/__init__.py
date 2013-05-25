@@ -4,6 +4,7 @@ Vengeance - text adventure game engine.
 from vengeance._direction import _Direction
 from vengeance._game import _Game
 from vengeance._room import _Room
+from vengeance.game import GameFormatException
 
 
 def _create_directions(direction_data):
@@ -14,8 +15,21 @@ def _create_directions(direction_data):
     """
     directions = []
     for datum in direction_data:
-        direction = _Direction(datum["name"])
-        opposite_direction = _Direction(datum["opposite"])
+        name = datum["name"]
+        opposite = datum["opposite"]
+
+        if name == opposite:
+            message = u'Redefined direction "{0}" as opposite of "{1}"'
+            raise GameFormatException(message.format(opposite, name))
+        if name in [d.name for d in directions]:
+            message = u'Redefined direction name "{0}"'
+            raise GameFormatException(message.format(name))
+        if opposite in [d.name for d in directions]:
+            message = u'Redefinition of direction name "{0}" as an opposite'
+            raise GameFormatException(message.format(opposite))
+
+        direction = _Direction(name)
+        opposite_direction = _Direction(opposite)
         direction.opposite = opposite_direction
         opposite_direction.opposite = direction
         directions.append(direction)
