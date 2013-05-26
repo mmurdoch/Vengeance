@@ -7,39 +7,84 @@ from vengeance import game
 class InitTest(unittest.TestCase):
 
     def test_matching_direction_name_and_opposite_throws(self):
-        self.assert_game_throws({
+        self.assert_run_game_throws({
             'directions': [
                 {'name': 'up', 'opposite': 'up'}
-            ],
-            'rooms': []
-        }, 'Redefined direction "up" as opposite of "up"')
+            ]
+        }, 'Direction "up" cannot be its own opposite')
 
     def test_non_unique_direction_name_throws(self):
-        self.assert_game_throws({
+        self.assert_run_game_throws({
             'directions': [
                 {'name': 'east', 'opposite': 'west'},
                 {'name': 'east', 'opposite': 'north'}
-            ],
-            'rooms': []
-        }, 'Redefined direction name "east"')
+            ]
+        }, 'Redefinition of direction "east"')
+
+    def test_non_unique_opposite_direction_throws(self):
+        self.assert_run_game_throws({
+            'directions': [
+                {'name': 'up', 'opposite': 'down'},
+                {'name': 'in', 'opposite': 'down'}
+            ]
+        }, 'Redefinition of direction "down" as an opposite')
 
     def test_direction_name_redefined_as_opposite_throws(self):
-        self.assert_game_throws({
+        self.assert_run_game_throws({
             'directions': [
                 {'name': 'north', 'opposite': 'south'},
                 {'name': 'west', 'opposite': 'north'}
-            ],
-            'rooms': []
-        }, 'Redefinition of direction name "north" as an opposite')
+            ]
+        }, 'Redefinition of direction "north" as an opposite')
 
-    # test_missing_name_in_direction_throws
-    # test_missing_opposite_in_direction_throws
-    # test_use_of_quit_as_direction_throws
+    def test_direction_opposite_redefined_as_name_throws(self):
+        self.assert_run_game_throws({
+            'directions': [
+                {'name': 'in', 'opposite': 'out'},
+                {'name': 'out', 'opposite': 'down'}
+            ]
+        }, 'Redefinition of direction "out"')
+
+    def test_missing_name_from_direction_throws(self):
+        self.assert_run_game_throws({
+            'directions': [
+                {'opposite': 'in'}
+            ]
+        }, 'Missing name from direction with opposite "in"')
+
+    def test_missing_opposite_from_direction_throws(self):
+        self.assert_run_game_throws({
+            'directions': [
+                {'name': 'west'}
+            ]
+        }, 'Missing opposite from direction with name "west"')
+
+    def test_missing_name_and_opposite_from_direction_throws(self):
+        self.assert_run_game_throws({
+            'directions': [
+                {}
+            ]
+        }, 'Missing name and opposite from direction')
+
+    def test_use_of_quit_as_direction_name_throws(self):
+        self.assert_run_game_throws({
+            'directions': [
+                {'name': 'quit', 'opposite': 'north'}
+            ]
+        }, 'Direction name cannot use reserved word "quit"')
+
+    def test_use_of_quit_as_direction_opposite_throws(self):
+        self.assert_run_game_throws({
+            'directions': [
+                {'name': 'up', 'opposite': 'quit'}
+            ]
+        }, 'Direction opposite cannot use reserved word "quit"')
+
     # test_undefined_room_in_exit_throws
     # test_missing_name_in_room_throws
     # test_missing_description_in_room_throws
 
-    def assert_game_throws(self, game_data, expected_message):
+    def assert_run_game_throws(self, game_data, expected_message):
         try:
             vengeance.run_game(game_data)
             self.fail()

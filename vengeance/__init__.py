@@ -15,18 +15,36 @@ def _create_directions(direction_data):
     """
     directions = []
     for datum in direction_data:
-        name = datum["name"]
-        opposite = datum["opposite"]
+        if 'name' not in datum and 'opposite' not in datum:
+            message = u'Missing name and opposite from direction'
+            raise GameFormatException(message)
+        if 'name' not in datum and 'opposite' in datum:
+            message = u'Missing name from direction with opposite "{0}"'
+            raise GameFormatException(message.format(datum['opposite']))
+        if 'opposite' not in datum and 'name' in datum:
+            message = u'Missing opposite from direction with name "{0}"'
+            raise GameFormatException(message.format(datum['name']))
+
+        name = datum['name']
+        opposite = datum['opposite']
 
         if name == opposite:
-            message = u'Redefined direction "{0}" as opposite of "{1}"'
+            message = u'Direction "{0}" cannot be its own opposite'
             raise GameFormatException(message.format(opposite, name))
         if name in [d.name for d in directions]:
-            message = u'Redefined direction name "{0}"'
+            message = u'Redefinition of direction "{0}"'
             raise GameFormatException(message.format(name))
         if opposite in [d.name for d in directions]:
-            message = u'Redefinition of direction name "{0}" as an opposite'
+            message = u'Redefinition of direction "{0}" as an opposite'
             raise GameFormatException(message.format(opposite))
+
+        if name == 'quit':
+            message = u'Direction name cannot use reserved word "quit"'
+            raise GameFormatException(message)
+
+        if opposite == 'quit':
+            message = u'Direction opposite cannot use reserved word "quit"'
+            raise GameFormatException(message)
 
         direction = _Direction(name)
         opposite_direction = _Direction(opposite)
