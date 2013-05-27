@@ -7,6 +7,34 @@ from vengeance._room import _Room
 from vengeance.game import GameFormatException
 
 
+class _Struct:
+    # Disable 'Too few public methods'
+    # pylint: disable=R0903
+    """
+    A structure based on a dictionary.
+    """
+    def __init__(self, **entries):
+        """
+        :param self: The instance to initialize
+        :param entries: The dictionary entries to be accessed
+        """
+        self.__dict__.update(entries)
+
+
+def _direction_name_key():
+    """
+    :returns: The dictionary key for a direction name
+    """
+    return 'name'
+
+
+def _direction_opposite_key():
+    """
+    :returns: The dictionary key for a direction opposite
+    """
+    return 'opposite'
+
+
 def _create_directions(direction_data):
     """
     Creates the directions in the game.
@@ -15,36 +43,25 @@ def _create_directions(direction_data):
     """
     directions = []
     for datum in direction_data:
-        if 'name' not in datum and 'opposite' not in datum:
-            message = u'Missing name and opposite from direction'
-            raise GameFormatException(message)
-        if 'name' not in datum and 'opposite' in datum:
-            message = u'Missing name from direction with opposite "{0}"'
-            raise GameFormatException(message.format(datum['opposite']))
-        if 'opposite' not in datum and 'name' in datum:
-            message = u'Missing opposite from direction with name "{0}"'
-            raise GameFormatException(message.format(datum['name']))
+        _check_direction_well_formed(datum)
 
-        name = datum['name']
-        opposite = datum['opposite']
+        # Disable 'Used * or ** magic
+        # pylint: disable=W0142
+        direction = _Struct(**datum)
+        direction_names = [d.name for d in directions]
+        _check_direction_valid(direction, direction_names)
 
-        if name == opposite:
-            message = u'Direction "{0}" cannot be its own opposite'
-            raise GameFormatException(message.format(opposite, name))
-        if name in [d.name for d in directions]:
-            message = u'Redefinition of direction "{0}"'
-            raise GameFormatException(message.format(name))
-        if opposite in [d.name for d in directions]:
-            message = u'Redefinition of direction "{0}" as an opposite'
-            raise GameFormatException(message.format(opposite))
+        # Disable 'Instance of '_Struct' has no 'name' member
+        # Disable 'Instance of '_Struct' has no 'opposite' member
+        # pylint: disable=E1101
+        name = direction.name
+        opposite = direction.opposite
 
-        if name == 'quit':
-            message = u'Direction name cannot use reserved word "quit"'
-            raise GameFormatException(message)
-
-        if opposite == 'quit':
-            message = u'Direction opposite cannot use reserved word "quit"'
-            raise GameFormatException(message)
+        reserved_word = 'quit'
+        name_key = _direction_name_key()
+        _check_if_direction_is_reserved(reserved_word, name, name_key)
+        opposite_key = _direction_opposite_key()
+        _check_if_direction_is_reserved(reserved_word, opposite, opposite_key)
 
         direction = _Direction(name)
         opposite_direction = _Direction(opposite)
@@ -56,6 +73,62 @@ def _create_directions(direction_data):
     return directions
 
 
+def _check_direction_well_formed(direction):
+    """
+    Checks the structure of a direction dictionary.
+
+    :param dict direction: The direction to check
+    :raises: ``GameFormatException`` if direction structure is invalid
+    """
+    name_key = _direction_name_key()
+    opposite_key = _direction_opposite_key()
+
+    if name_key not in direction:
+        if opposite_key not in direction:
+            message = u'Missing name and opposite from direction'
+            raise GameFormatException(message)
+        else:
+            message = u'Missing name from direction with opposite "{0}"'
+            raise GameFormatException(message.format(direction[opposite_key]))
+    elif opposite_key not in direction:
+        message = u'Missing opposite from direction with name "{0}"'
+        raise GameFormatException(message.format(direction[name_key]))
+
+
+def _check_direction_valid(direction, direction_names):
+    """
+    Checks the validity of a direction dictionary.
+
+    :param dict direction: The direction to check
+    :param list direction_names: The current set of direction names
+    """
+    if direction.name == direction.opposite:
+        message = u'Direction "{0}" cannot be its own opposite'
+        raise GameFormatException(message.format(direction.name))
+
+    if direction.name in direction_names:
+        message = u'Redefinition of direction "{0}"'
+        raise GameFormatException(message.format(direction.name))
+
+    if direction.opposite in direction_names:
+        message = u'Redefinition of direction "{0}" as an opposite'
+        raise GameFormatException(message.format(direction.opposite))
+
+
+def _check_if_direction_is_reserved(reserved_word, to_check, to_check_key):
+    """
+    Checks if a direction is using a reserved word.
+
+    :param str reserved_word: The reserved word to check
+    :param str to_check: The direction to check
+    :param str to_check_key: The direction dictionary key of ``to_check``
+    :raises: ``GameFormatException`` if direction is using a reserved word
+    """
+    if to_check == reserved_word:
+        message = u'Direction {0} cannot use reserved word "{1}"'
+        raise GameFormatException(message.format(to_check_key, reserved_word))
+
+
 def _create_rooms(room_data):
     """
     Creates the rooms in the game.
@@ -65,6 +138,11 @@ def _create_rooms(room_data):
     rooms = []
     for room_datum in room_data:
         room_name = room_datum['name']
+
+        if room_name in [r.name for r in rooms]:
+            message = u'Redefinition of room "{0}"'
+            raise GameFormatException(message.format(room_name))
+
         room = _Room(room_name, room_datum['description'])
         rooms.append(room)
 
@@ -152,6 +230,9 @@ def _load_rooms(game_data):
 
     game_data: Details of the rooms in the game
     """
+    if 'directions' not in game_data:
+        raise GameFormatException(u'Missing "directions" list')
+
     directions = _create_directions(game_data['directions'])
     room_data = game_data['rooms']
     rooms = _create_rooms(room_data)
@@ -165,8 +246,12 @@ def _create_game(game_data):
     """
     Creates a game.
 
-    game_data: Details of the rooms in the game
+    :param dict game_data: Details of the rooms in the game
+    :raises: GameFormatException if the ``game_data`` structure is invalid
     """
+    if not isinstance(game_data, dict):
+        raise GameFormatException(u'game_data must be a dictionary')
+
     rooms = _load_rooms(game_data)
 
     if len(rooms) > 0:
@@ -179,11 +264,8 @@ def run_game(game_data):
     """
     Runs a game.
 
-    Args:
-      game_data (dict): Details of the rooms in the game
-
-    Returns:
-      None
+    :param dict game_data: Details of the rooms in the game
+    :raises: ``GameFormatException`` if the ``game_data`` structure is invalid
 
     ``game_data`` is a dictionary containing two key-value pairs, one with key
     ``'directions'`` and the other with key ``'rooms'``. Each of these keys

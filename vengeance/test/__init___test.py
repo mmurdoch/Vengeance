@@ -6,6 +6,17 @@ from vengeance import game
 
 class InitTest(unittest.TestCase):
 
+    def test_game_data_none_throws(self):
+        self.assert_run_game_throws(None, 'game_data must be a dictionary')
+
+    def test_game_data_not_dictionary_throws(self):
+        self.assert_run_game_throws([], 'game_data must be a dictionary')
+
+    def test_missing_directions_throws(self):
+        self.assert_run_game_throws({
+            'rooms': []
+        }, 'Missing "directions" list')
+
     def test_matching_direction_name_and_opposite_throws(self):
         self.assert_run_game_throws({
             'directions': [
@@ -79,6 +90,15 @@ class InitTest(unittest.TestCase):
                 {'name': 'up', 'opposite': 'quit'}
             ]
         }, 'Direction opposite cannot use reserved word "quit"')
+
+    def test_non_unique_room_name_throws(self):
+        self.assert_run_game_throws({
+            'directions': [],
+            'rooms': [
+                {'name': 'Entrance Hall', 'description': 'A description'},
+                {'name': 'Entrance Hall', 'description': 'B description'}
+            ]
+        }, 'Redefinition of room "Entrance Hall"')
 
     # test_undefined_room_in_exit_throws
     # test_missing_name_in_room_throws
