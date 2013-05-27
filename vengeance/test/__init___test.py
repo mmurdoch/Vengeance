@@ -14,8 +14,7 @@ class InitTest(unittest.TestCase):
 
     def test_missing_directions_throws(self):
         self.assert_run_game_throws({
-            'rooms': []
-        }, 'Missing "directions" list')
+        }, 'Missing directions list')
 
     def test_matching_direction_name_and_opposite_throws(self):
         self.assert_run_game_throws({
@@ -56,14 +55,14 @@ class InitTest(unittest.TestCase):
             ]
         }, 'Redefinition of direction "out"')
 
-    def test_missing_name_from_direction_throws(self):
+    def test_missing_direction_name_throws(self):
         self.assert_run_game_throws({
             'directions': [
                 {'opposite': 'in'}
             ]
         }, 'Missing name from direction with opposite "in"')
 
-    def test_missing_opposite_from_direction_throws(self):
+    def test_missing_direction_opposite_throws(self):
         self.assert_run_game_throws({
             'directions': [
                 {'name': 'west'}
@@ -76,6 +75,20 @@ class InitTest(unittest.TestCase):
                 {}
             ]
         }, 'Missing name and opposite from direction')
+
+    def test_direction_name_not_string_throws(self):
+        self.assert_run_game_throws({
+            'directions': [
+                {'name': False, 'opposite': 'down'}
+            ]
+        }, 'Direction name must be a string')
+
+    def test_direction_opposite_not_string_throws(self):
+        self.assert_run_game_throws({
+            'directions': [
+                {'name': 'up', 'opposite': []}
+            ]
+        }, 'Direction opposite must be a string')
 
     def test_use_of_quit_as_direction_name_throws(self):
         self.assert_run_game_throws({
@@ -100,9 +113,36 @@ class InitTest(unittest.TestCase):
             ]
         }, 'Redefinition of room "Entrance Hall"')
 
+    def test_missing_rooms_throws(self):
+        self.assert_run_game_throws({
+            'directions': []
+        }, 'Missing rooms list')
+
+    def test_zero_rooms_throws(self):
+        self.assert_run_game_throws({
+            'directions': [],
+            'rooms': []
+        }, 'Rooms list must contain at least one room')
+
+    def test_missing_room_name_throws(self):
+        self.assert_run_game_throws({
+            'directions': [],
+            'rooms': [
+                {'description': 'No name'}
+            ]
+        }, 'Missing name from room with description "No name"')
+
+    def test_room_name_not_string_throws(self):
+        self.assert_run_game_throws({
+            'directions': [],
+            'rooms': [
+                {'name': {}, 'description': 'Bad name'}
+            ]
+        }, 'Room name must be a string')
+
+    # test_missing_room_description_throws
+    # test_room_description_not_string_throws
     # test_undefined_room_in_exit_throws
-    # test_missing_name_in_room_throws
-    # test_missing_description_in_room_throws
 
     def assert_run_game_throws(self, game_data, expected_message):
         try:
