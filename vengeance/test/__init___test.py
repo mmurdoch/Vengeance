@@ -194,7 +194,17 @@ class InitTest(unittest.TestCase):
         }, 'Missing direction from exit to room "The Sewers" '
            'from room "The Cellar"')
 
-    #def test_missing_exit_to_room_and_direction_throws(self):
+    def test_missing_exit_to_room_and_direction_throws(self):
+        self.assert_run_game_throws({
+            'directions': [],
+            'rooms': [
+                {'name': 'The Tower',
+                 'description': 'A room at the top of the tallest tower',
+                 'exits': [
+                     {}
+                 ]}
+            ]
+        }, 'Missing to room and direction from exit from room "The Tower"')
 
     #def test_exit_to_room_not_string_throws(self):
 

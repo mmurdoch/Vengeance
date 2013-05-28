@@ -191,10 +191,16 @@ def _create_exit_data(room_data):
             current_exit.setdefault('one_way', False)
 
             if 'to' not in current_exit:
-                message = u'Missing to room from exit with direction "{0}" ' \
-                          u'from room "{1}"'
-                raise GameFormatException(
-                    message.format(current_exit['direction'], room_name))
+                if 'direction' not in current_exit:
+                    if 'direction' not in current_exit:
+                        message = u'Missing to room and direction from ' \
+                                  u'exit from room "{0}"'
+                        raise GameFormatException(message.format(room_name))
+                else:
+                    message = u'Missing to room from exit with direction ' \
+                              u'"{0}" from room "{1}"'
+                    raise GameFormatException(
+                        message.format(current_exit['direction'], room_name))
 
             if 'direction' not in current_exit:
                 message = u'Missing direction from exit to room "{0}" ' \
