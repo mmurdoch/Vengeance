@@ -1,6 +1,13 @@
+v1.0.1, 2012-05-28
+
+* Add input validation to vengeance.run_game(game_data)
+* Add Pylint and PEP8 conformance
+* Add documentation generation with Sphinx
+
 v1.0.0, 2012-05-18
 
 * Fix project name!
+* Non-API classes and functions prepended with underscores to 'hide' them
 
 v0.1.1, 2012-05-12
 

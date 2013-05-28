@@ -1,9 +1,12 @@
+"""
+An adventure game.
+"""
 from __future__ import print_function
 
 import sys
 
-from _command import _Command
-from _player import _Player
+from vengeance._command import _Command
+from vengeance._player import _Player
 
 
 class _Game:
@@ -33,8 +36,8 @@ class _Game:
         Runs the game.
         """
         while (True):
-            display_room(self._player.current_room)
-            self._process_command(get_input())
+            _display_room(self._player.current_room)
+            self._process_command(_get_input())
 
     def move_player_to(self, room):
         """
@@ -51,7 +54,7 @@ class _Game:
         context: The context in which the quit was initiated
         """
         print("Are you sure you want to quit?")
-        quit_input = get_input()
+        quit_input = _get_input()
         if quit_input == "y" or quit_input == "yes":
             self.save()
             sys.exit()
@@ -78,7 +81,7 @@ class _Game:
                 command.run(self)
 
 
-def display_room(room):
+def _display_room(room):
     """
     Displays room information to the user.
 
@@ -97,7 +100,7 @@ def display_room(room):
     print(room.description)
 
 
-def get_input():
+def _get_input():
     """
     Retrieves input from the user.
     """

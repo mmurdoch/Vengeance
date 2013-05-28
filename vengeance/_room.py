@@ -1,6 +1,9 @@
-from _command import _Command
-from _exit import _Exit
-from _game import _Game
+"""
+A room.
+"""
+from vengeance._command import _Command
+from vengeance._exit import _Exit
+from vengeance._game import _Game
 
 
 class _Room:

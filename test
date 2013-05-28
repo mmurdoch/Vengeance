@@ -1,2 +1,27 @@
+echo Running pylint
+pylint vengeance
+if [ $? -ne 0 ]
+    then echo 'Pylint errors' && exit 1
+fi
+
+echo Running pep8
+pep8 vengeance
+if [ $? -ne 0 ]
+    then echo 'PEP8 errors' && exit 1
+fi
+
 python setup.py install
+
+cd sphinx
+make clean
+make html
+cd ..
+cd docs
+rm -rf *
+cd ..
+cp -R sphinx/_build/html/* docs
+
 python vengeance/test/__init___test.py
+if [ $? -ne 0 ]
+    then echo 'Tests failed' && exit 1
+fi

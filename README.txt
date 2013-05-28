@@ -4,9 +4,19 @@ Vengeance
 Vengeance is a text-based adventure game engine created as an exercise in
 Python backward compatibility.
 
+Prerequisites
+=============
+Vengeance does not depend on any libraries at runtime.
+
 Building and Installing
 =======================
-Run the ``test`` script:
+To build Vengeance you will need to install:
+
+* Pylint (``pip install pylint``)
+* PEP8 (``pip install pep8``)
+* Sphinx (``pip install Sphinx``)
+
+To build, check, package, install and test Vengeance, run the ``test`` script:
 
     ./test
 

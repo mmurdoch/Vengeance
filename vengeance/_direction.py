@@ -1,3 +1,8 @@
+"""
+A movement direction.
+"""
+
+
 class _Direction:
     """
     A direction in which movement can be made.
