@@ -206,11 +206,46 @@ class InitTest(unittest.TestCase):
             ]
         }, 'Missing to room and direction from exit from room "The Tower"')
 
-    #def test_exit_to_room_not_string_throws(self):
+    def test_exit_to_room_not_string_throws(self):
+        self.assert_run_game_throws({
+            'directions': [
+                {'name': 'in', 'opposite': 'out'}
+            ],
+            'rooms': [
+                {'name': 'A Coffin',
+                 'description': 'An ancient, dusty sarcophagus',
+                 'exits': [
+                     {'to': False, 'direction': 'out'}
+                 ]}
+            ]
+        }, 'Exit to room must be a string')
 
-    #def test_exit_direction_not_string_throws(self):
+    def test_exit_direction_not_string_throws(self):
+        self.assert_run_game_throws({
+            'directions': [
+            ],
+            'rooms': [
+                {'name': 'Dining Room',
+                 'description': 'The main eatery',
+                 'exits': [
+                     {'to': 'Hallway', 'direction': 8}
+                 ]}
+            ]
+        }, 'Exit direction must be a string')
 
-    #def test_exit_one_way_exit_not_boolean_throws(self):
+    def test_exit_one_way_exit_not_boolean_throws(self):
+        self.assert_run_game_throws({
+            'directions': [
+                {'name': 'up', 'opposite': 'down'}
+            ],
+            'rooms': [
+                {'name': 'Stairwell',
+                 'description': 'Up and down steps',
+                 'exits': [
+                     {'to': 'Landing', 'direction': 'up', 'one_way': 'Yes'}
+                 ]}
+            ]
+        }, 'Exit one_way must be a boolean')
 
     def test_undefined_room_in_exit_throws(self):
         self.assert_run_game_throws({

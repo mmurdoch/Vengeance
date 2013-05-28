@@ -208,11 +208,23 @@ def _create_exit_data(room_data):
                 raise GameFormatException(
                     message.format(current_exit['to'], room_name))
 
+            to_room = current_exit['to']
+            if not isinstance(to_room, str):
+                raise GameFormatException('Exit to room must be a string')
+
+            direction = current_exit['direction']
+            if not isinstance(direction, str):
+                raise GameFormatException('Exit direction must be a string')
+
+            one_way = current_exit['one_way']
+            if not isinstance(one_way, bool):
+                raise GameFormatException('Exit one_way must be a boolean')
+
             exit_datum = {
                 'from': room_name,
-                'to': current_exit['to'],
-                'direction': current_exit['direction'],
-                'one_way': current_exit['one_way']
+                'to': to_room,
+                'direction': direction,
+                'one_way': one_way
             }
             exit_data.append(exit_datum)
 
