@@ -146,19 +146,32 @@ def _create_rooms(room_data):
     rooms = []
     for room_datum in room_data:
         if 'name' not in room_datum:
-            description = room_datum['description']
-            message = u'Missing name from room with description "{0}"'
-            raise GameFormatException(message.format(description))
+            if 'description' not in room_datum:
+                message = u'Missing name and description from room'
+                raise GameFormatException(message)
+            else:
+                description = room_datum['description']
+                message = u'Missing name from room with description "{0}"'
+                raise GameFormatException(message.format(description))
 
-        room_name = room_datum['name']
-        if not isinstance(room_name, str):
+        name = room_datum['name']
+
+        if 'description' not in room_datum:
+            message = u'Missing description from room with name "{0}"'
+            raise GameFormatException(message.format(name))
+
+        if not isinstance(name, str):
             raise GameFormatException(u'Room name must be a string')
 
-        if room_name in [r.name for r in rooms]:
+        if name in [r.name for r in rooms]:
             message = u'Redefinition of room "{0}"'
-            raise GameFormatException(message.format(room_name))
+            raise GameFormatException(message.format(name))
 
-        room = _Room(room_name, room_datum['description'])
+        description = room_datum['description']
+        if not isinstance(description, str):
+            raise GameFormatException(u'Room description must be a string')
+
+        room = _Room(name, description)
         rooms.append(room)
 
     return rooms
@@ -176,6 +189,19 @@ def _create_exit_data(room_data):
         room_datum.setdefault('exits', [])
         for current_exit in room_datum['exits']:
             current_exit.setdefault('one_way', False)
+
+            if 'to' not in current_exit:
+                message = u'Missing to room from exit with direction "{0}" ' \
+                          u'from room "{1}"'
+                raise GameFormatException(
+                    message.format(current_exit['direction'], room_name))
+
+            if 'direction' not in current_exit:
+                message = u'Missing direction from exit to room "{0}" ' \
+                          u'from room "{1}"'
+                raise GameFormatException(
+                    message.format(current_exit['to'], room_name))
+
             exit_datum = {
                 'from': room_name,
                 'to': current_exit['to'],
@@ -217,9 +243,8 @@ def _add_exits(rooms, directions, exit_data):
         to_name = datum['to']
         to_room = _find_room(to_name, rooms)
         if to_room is None:
-            print('Unknown exit room ' + to_name +
-                  ' from ' + from_name + "'")
-            #sys.exit()
+            message = u'Unknown exit room "{0}" from "{1}"'
+            raise GameFormatException(message.format(to_name, from_name))
 
         direction_name = datum['direction']
         the_exit = None
@@ -227,8 +252,9 @@ def _add_exits(rooms, directions, exit_data):
             if direction.name == direction_name:
                 the_exit = direction
         if the_exit is None:
-            print('Unknown direction ' + direction_name)
-            #sys.exit()
+            message = u'Unknown exit direction "{0}" from room "{1}"'
+            raise GameFormatException(
+                message.format(direction_name, from_name))
 
         one_way = datum['one_way']
         add_exit_func = None

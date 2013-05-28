@@ -140,9 +140,95 @@ class InitTest(unittest.TestCase):
             ]
         }, 'Room name must be a string')
 
-    # test_missing_room_description_throws
-    # test_room_description_not_string_throws
-    # test_undefined_room_in_exit_throws
+    def test_missing_room_description_throws(self):
+        self.assert_run_game_throws({
+            'directions': [],
+            'rooms': [
+                {'name': 'No Description'}
+            ]
+        }, 'Missing description from room with name "No Description"')
+
+    def test_room_description_not_string_throws(self):
+        self.assert_run_game_throws({
+            'directions': [],
+            'rooms': [
+                {'name': 'Bad Description', 'description': []}
+            ]
+        }, 'Room description must be a string')
+
+    def test_missing_room_name_and_description_throws(self):
+        self.assert_run_game_throws({
+            'directions': [],
+            'rooms': [
+                {}
+            ]
+        }, 'Missing name and description from room')
+
+    def test_missing_exit_to_room_throws(self):
+        self.assert_run_game_throws({
+            'directions': [
+                {'name': 'left', 'opposite': 'right'}
+            ],
+            'rooms': [
+                {'name': 'T-Junction',
+                 'description': 'A fork in the road',
+                 'exits': [
+                     {'direction': 'right'}
+                 ]}
+            ]
+        }, 'Missing to room from exit with direction '
+           '"right" from room "T-Junction"')
+
+    def test_missing_exit_direction_throws(self):
+        self.assert_run_game_throws({
+            'directions': [],
+            'rooms': [
+                {'name': 'The Cellar',
+                 'description': 'A dark, damp basement',
+                 'exits': [
+                     {'to': 'The Sewers'}
+                 ]},
+                {'name': 'The Sewers',
+                 'description': 'The city waste disposal system'}
+            ]
+        }, 'Missing direction from exit to room "The Sewers" '
+           'from room "The Cellar"')
+
+    #def test_missing_exit_to_room_and_direction_throws(self):
+
+    #def test_exit_to_room_not_string_throws(self):
+
+    #def test_exit_direction_not_string_throws(self):
+
+    #def test_exit_one_way_exit_not_boolean_throws(self):
+
+    def test_undefined_room_in_exit_throws(self):
+        self.assert_run_game_throws({
+            'directions': [
+                {'name': 'north', 'opposite': 'south'}
+            ],
+            'rooms': [
+                {'name': 'A Room',
+                 'description': 'An empty room',
+                 'exits': [
+                     {'to': 'B Room', 'direction': 'north'}
+                 ]}
+            ]
+        }, 'Unknown exit room "B Room" from "A Room"')
+
+    def test_undefined_direction_in_exit_throws(self):
+        self.assert_run_game_throws({
+            'directions': [],
+            'rooms': [
+                {'name': 'A Room',
+                 'description': 'An empty room',
+                 'exits': [
+                     {'to': 'B Room', 'direction': 'up'}
+                 ]},
+                {'name': 'B Room',
+                 'description': 'Another empty room'}
+            ]
+        }, 'Unknown exit direction "up" from room "A Room"')
 
     def assert_run_game_throws(self, game_data, expected_message):
         try:
