@@ -13,13 +13,14 @@ class _Game:
     """
     An adventure game.
     """
-    def __init__(self, starting_room):
+    def __init__(self, rooms):
         """
         Creates a game.
 
         starting_room: The room in which the player will start
         """
-        self._player = _Player(starting_room)
+        self._rooms = rooms
+        self._player = _Player(rooms[0])
         self._commands = []
         self.add_command(_Command("quit", _Game.quit, self))
 
@@ -46,6 +47,21 @@ class _Game:
         room: The room to which to move the player
         """
         self._player.move_to(room)
+
+    def find_room(self, room_name):
+        """
+        Finds a room by name.
+
+        Returns the room or None if the room was not found.
+
+        name: The name of the room to find
+        rooms: The rooms in which to search
+        """
+        for room in self._rooms:
+            if room.name == room_name:
+                return room
+
+        return None
 
     def quit(self, _):
         """

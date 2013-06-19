@@ -282,9 +282,31 @@ class InitTest(unittest.TestCase):
         except game.GameFormatException as e:
             self.assertEqual(expected_message, e.message)
 
+    def test_one_way_exit(self):
+        game = vengeance.create_game({
+            'directions': [
+                {'name': 'up', 'opposite': 'down'},
+            ],
+            'rooms': [
+                {'name': 'Room A',
+                 'description': 'A',
+                 'exits': [
+                     {'to': 'Room B', 'direction': 'down', 'one_way': True}
+                 ]},
+                {'name': 'Room B',
+                 'description': 'B'
+                 }
+            ]
+        })
+
+        room_a = game.find_room('Room A')
+        self.assertEqual(1, len(room_a.exits))
+        room_b = game.find_room('Room B')
+        self.assertEqual(0, len(room_b.exits))
+
     # Ah, this doesn't test the public API (and therefore won't work with
     # from vengeance import * - which Pylint complains about...)
-    def test_one_way_exit(self):
+    def test_one_way_exit_old(self):
         rooms = vengeance._load_rooms({
             'directions': [
                 {'name': 'up', 'opposite': 'down'},

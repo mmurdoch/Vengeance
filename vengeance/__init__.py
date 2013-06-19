@@ -311,11 +311,11 @@ def _load_rooms(game_data):
     return rooms
 
 
-def _create_game(game_data):
+def create_game(game_data):
     """
     Creates a game.
 
-    :param dict game_data: Details of the rooms in the game
+    :param dict game_data: Details of the rooms in the game (see run_game)
     :raises: GameFormatException if ``game_data`` is invalid
     """
     if not isinstance(game_data, dict):
@@ -324,7 +324,7 @@ def _create_game(game_data):
     rooms = _load_rooms(game_data)
 
     if len(rooms) > 0:
-        return _Game(rooms[0])
+        return _Game(rooms)
 
     return None
 
@@ -387,5 +387,5 @@ def run_game(game_data):
         })
 
     """
-    game = _create_game(game_data)
+    game = create_game(game_data)
     game.run()
