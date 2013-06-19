@@ -283,18 +283,13 @@ def _add_exits(rooms, directions, exit_data):
         add_exit_func(from_room, the_exit, to_room)
 
 
-def _load_rooms(game_data):
+def _get_room_data(game_data):
     """
-    Loads rooms, and wires up their exits.
+    Retrieves room data.
 
-    :param dict game_data: Details of the rooms in the game
-    :raises: GameFormatException if ``game_data`` is invalid
+    :param dict game_data: Details of the rooms in the game (see run_game)
+    :raises: GameFormatException if room data is invalid
     """
-    if 'directions' not in game_data:
-        raise GameFormatException(u'Missing directions list')
-
-    directions = _create_directions(game_data['directions'])
-
     if 'rooms' not in game_data:
         raise GameFormatException(u'Missing rooms list')
 
@@ -304,11 +299,7 @@ def _load_rooms(game_data):
         message = u'Rooms list must contain at least one room'
         raise GameFormatException(message)
 
-    rooms = _create_rooms(room_data)
-    exit_data = _create_exit_data(room_data)
-    _add_exits(rooms, directions, exit_data)
-
-    return rooms
+    return room_data
 
 
 def create_game(game_data):
@@ -316,12 +307,22 @@ def create_game(game_data):
     Creates a game.
 
     :param dict game_data: Details of the rooms in the game (see run_game)
+    :returns: Created game or None if ``game_data`` contains no rooms
+    :rtype: Game
     :raises: GameFormatException if ``game_data`` is invalid
     """
     if not isinstance(game_data, dict):
         raise GameFormatException(u'game_data must be a dictionary')
 
-    rooms = _load_rooms(game_data)
+    if 'directions' not in game_data:
+        raise GameFormatException(u'Missing directions list')
+
+    directions = _create_directions(game_data['directions'])
+
+    rooms = _create_rooms(_get_room_data(game_data))
+
+    exit_data = _create_exit_data(_get_room_data(game_data))
+    _add_exits(rooms, directions, exit_data)
 
     if len(rooms) > 0:
         return _Game(rooms)
