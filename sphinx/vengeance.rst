@@ -9,3 +9,7 @@ vengeance Package
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: vengeance.game
+    :members:
+    :undoc-members:
+    :show-inheritance:
