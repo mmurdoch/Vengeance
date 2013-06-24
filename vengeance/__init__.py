@@ -2,9 +2,9 @@
 Vengeance - text adventure game engine.
 """
 from vengeance._direction import _Direction
-from vengeance._game import _Game
-from vengeance._room import _Room
+from vengeance.game import Game
 from vengeance.game import GameFormatException
+from vengeance.game import Location
 
 
 class _Struct:
@@ -171,7 +171,7 @@ def _create_rooms(room_data):
         if not isinstance(description, str):
             raise GameFormatException(u'Room description must be a string')
 
-        room = _Room(name, description)
+        room = Location(name, description)
         rooms.append(room)
 
     return rooms
@@ -231,36 +231,22 @@ def _create_exit_data(room_data):
     return exit_data
 
 
-def _find_room(name, rooms):
+def _add_exits(game, directions, exit_data):
+    # Disable 'Access to a protected member _run of a client class'
+    # pylint: disable=W0212
     """
-    Finds a room by name.
+    Adds exits to locations.
 
-    Returns the room or None if the room was not found.
-
-    name: The name of the room to find
-    rooms: The rooms in which to search
-    """
-    for room in rooms:
-        if room.name == name:
-            return room
-
-    return None
-
-
-def _add_exits(rooms, directions, exit_data):
-    """
-    Adds exits to rooms.
-
-    rooms: The rooms to which to add exits
+    game: The game containing the locations to which to add exits
     directions: The directions in which exits can lead
     exit_data: Details of the exits in the game
     """
     for datum in exit_data:
         from_name = datum['from']
-        from_room = _find_room(from_name, rooms)
+        from_location = game.find_location(from_name)
         to_name = datum['to']
-        to_room = _find_room(to_name, rooms)
-        if to_room is None:
+        to_location = game.find_location(to_name)
+        if to_location is None:
             message = u'Unknown exit room "{0}" from "{1}"'
             raise GameFormatException(message.format(to_name, from_name))
 
@@ -277,10 +263,10 @@ def _add_exits(rooms, directions, exit_data):
         one_way = datum['one_way']
         add_exit_func = None
         if one_way:
-            add_exit_func = _Room.add_one_way_exit
+            add_exit_func = Location._add_one_way_exit
         else:
-            add_exit_func = _Room.add_exit
-        add_exit_func(from_room, the_exit, to_room)
+            add_exit_func = Location._add_exit
+        add_exit_func(from_location, the_exit, to_location)
 
 
 def _get_room_data(game_data):
@@ -306,7 +292,7 @@ def create_game(game_data):
     """
     Creates a game.
 
-    :param dict game_data: Details of the rooms in the game (see run_game)
+    :param dict game_data: Details of the game (see run_game)
     :returns: Created game or None if ``game_data`` contains no rooms
     :rtype: Game
     :raises: GameFormatException if ``game_data`` is invalid
@@ -320,17 +306,19 @@ def create_game(game_data):
     directions = _create_directions(game_data['directions'])
 
     rooms = _create_rooms(_get_room_data(game_data))
-
-    exit_data = _create_exit_data(_get_room_data(game_data))
-    _add_exits(rooms, directions, exit_data)
-
     if len(rooms) > 0:
-        return _Game(rooms)
+        game = Game(rooms)
+        exit_data = _create_exit_data(_get_room_data(game_data))
+        _add_exits(game, directions, exit_data)
+
+        return game
 
     return None
 
 
 def run_game(game_data):
+    # Disable 'Access to a protected member _run of a client class'
+    # pylint: disable=W0212
     """
     Runs a game.
 
@@ -389,4 +377,4 @@ def run_game(game_data):
 
     """
     game = create_game(game_data)
-    game.run()
+    game._run()

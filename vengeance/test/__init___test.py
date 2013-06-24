@@ -299,9 +299,9 @@ class InitTest(unittest.TestCase):
             ]
         })
 
-        room_a = game.find_room('Room A')
+        room_a = game.find_location('Room A')
         self.assertEqual(1, len(room_a.exits))
-        room_b = game.find_room('Room B')
+        room_b = game.find_location('Room B')
         self.assertEqual(0, len(room_b.exits))
 
 if __name__ == '__main__':

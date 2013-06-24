@@ -7,25 +7,26 @@ class _Player:
     """
     A player of a game.
     """
-    def __init__(self, starting_room):
+    def __init__(self, starting_location):
         """
         Creates a player.
 
-        starting_room: The room in which the player starts
+        :param Location starting_location: The location in which the
+        player starts
         """
-        self._current_room = starting_room
+        self._current_location = starting_location
 
     @property
-    def current_room(self):
+    def current_location(self):
         """
-        The current room in which the player resides.
+        The current location in which the player resides.
         """
-        return self._current_room
+        return self._current_location
 
-    def move_to(self, room):
+    def move_to(self, location):
         """
-        Moves the player to a room.
+        Moves the player to a location.
 
-        room: The room to which the player will move
+        :param Location location: The location to which the player will move
         """
-        self._current_room = room
+        self._current_location = location
