@@ -180,13 +180,6 @@ class Location:
         self._commands.append(exit_command)
 
     @property
-    def exits(self):
-        """
-        The exits from the location.
-        """
-        return self._exits
-
-    @property
     def name(self):
         """
         The unique name of the location.
@@ -199,6 +192,13 @@ class Location:
         The description of the location.
         """
         return self._description
+
+    @property
+    def exits(self):
+        """
+        The exits from the location.
+        """
+        return self._exits
 
 
 class GameFormatException(Exception):

@@ -4,7 +4,7 @@ from vengeance.game import Location
 
 
 class GameTest(unittest.TestCase):
-    def test_find_room(self):
+    def test_find_location(self):
         pass
 
 
