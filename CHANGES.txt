@@ -1,4 +1,4 @@
-v1.1.0, 2013-06-xx
+v1.1.0, 2013-07-xx
 
 * Correct release years in CHANGES.txt!
 * Extend API to make run_game() fully testable

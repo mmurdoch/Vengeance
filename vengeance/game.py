@@ -5,52 +5,29 @@ from __future__ import print_function
 
 import sys
 
-from vengeance._command import _Command
-from vengeance._exit import _Exit
-from vengeance._player import _Player
-
 
 class Game:
-    # Disable 'Too few public methods'
-    # pylint: disable=R0903
     """
     An adventure game.
+
+    :param list locations: The locations in the game. The first location
+     in the list is the one in which the player's character starts
     """
     def __init__(self, locations):
-        """
-        Creates a game.
-
-        :param list locations: The locations in the game. The first location
-        in the list is the one in which the character starts
-        """
         self._locations = locations
-        self._player = _Player(locations[0])
+        self._character = PlayerCharacter(locations[0])
         self._commands = []
-        self._add_command(_Command("quit", Game._quit, self))
+        self._add_command(Command("quit", Game._quit, self))
 
-    def _add_command(self, command):
+    @property
+    def character(self):
         """
-        Adds a command to the game.
+        The player's active character in the game.
 
-        command: Command to add
+        :return: the active character
+        :rtype: PlayerCharacter
         """
-        self._commands.append(command)
-
-    def _run(self):
-        """
-        Runs the game.
-        """
-        while (True):
-            _display_location(self._player.current_location)
-            self._process_command(_get_input())
-
-    def _move_player_to(self, location):
-        """
-        Moves the player to a location.
-
-        :param Location location: The location to which to move the player
-        """
-        self._player.move_to(location)
+        return self._character
 
     def find_location(self, location_name):
         """
@@ -65,6 +42,78 @@ class Game:
                 return location
 
         return None
+
+    def find_command(self, command_name):
+        # Disable 'Access to a protected member _commands of a client class'
+        # Disable 'Access to a protected member _current_location of
+        # a client class'
+        # pylint: disable=W0212
+        """
+        Finds a command by name or synonym. The command is searched for
+        within this game and the current location of the character.
+
+        :param string command_name: The name or synonym of the command to find
+        :return: the first matching command or None if not found
+        :rtype: Command
+        """
+        found_commands = self.find_commands(command_name)
+        if len(found_commands) >= 1:
+            return found_commands[0]
+
+        return None
+
+    def find_commands(self, command_name):
+        # Disable 'Access to a protected member _commands of a client class'
+        # Disable 'Access to a protected member _current_location of
+        # a client class'
+        # pylint: disable=W0212
+        """
+        Finds all commands which match the specified name or synonym.
+        Commands are searched for within this game and the current
+        location of the character.
+
+        :param string command_name: The name or synonym of the commands to
+         find
+        :return: all matching commands
+        :rtype: list
+        """
+        found_commands = []
+
+        for command in self._commands:
+            if command.matches(command_name):
+                found_commands.append(command)
+
+        for command in self.character._current_location._commands:
+            if command.matches(command_name):
+                found_commands.append(command)
+
+        return found_commands
+
+    def _add_command(self, command):
+        """
+        Adds a command to the game.
+
+        command: Command to add
+        """
+        self._commands.append(command)
+
+    def _run(self):
+        """
+        Runs the game.
+        """
+        while (True):
+            _display_location(self._character.current_location)
+            self.process_input(_get_input())
+
+    def _move_character_to(self, location):
+        """
+        Moves the character to a location.
+
+        :param Location location: The location to which to move the character
+        """
+        # Disable 'Access to a protected member _move_to of a client class'
+        # pylint: disable=W0212
+        self.character._move_to(location)
 
     def _quit(self, _):
         """
@@ -84,18 +133,20 @@ class Game:
         """
         pass
 
-    def _process_command(self, user_input):
+    def process_input(self, user_input):
+        # Disable 'Access to a protected member _commands of a client class'
+        # pylint: disable=W0212
         """
-        Processes a command from the user.
+        Processes input from the user.
 
-        user_input: The input command to process
+        :param string user_input: The input command to process
         """
         for command in self._commands:
             if command.matches(user_input):
                 command.run(self)
 
-        room = self._player.current_location
-        for command in room.commands:
+        location = self._character.current_location
+        for command in location._commands:
             if command.matches(user_input):
                 command.run(self)
 
@@ -111,7 +162,7 @@ def _display_location(location):
     if len(location.exits) == 0:
         title += "<none> "
     for an_exit in location.exits:
-        title += an_exit.direction
+        title += an_exit.direction.name
         title += " "
     title += "\b"
     title += ")"
@@ -126,25 +177,63 @@ def _get_input():
     return raw_input()
 
 
+class Direction:
+    """
+    A direction in which movement can be made.
+
+    :param string name: The unique name of the direction
+    """
+    def __init__(self, name):
+        self._name = name
+        self._opposite = None
+
+    @property
+    def name(self):
+        """
+        The unique name of the direction.
+
+        :return: The direction name
+        :rtype: string
+        """
+        return self._name
+
+    @property
+    def opposite(self):
+        """
+        The opposite direction (as 'east' is to 'west',
+        'in' is to 'out', etc.).
+
+        :return: The opposite direction
+        :rtype: Direction
+        """
+        return self._opposite
+
+    @opposite.setter
+    def opposite(self, value):
+        """
+        Sets the opposite direction.
+
+        :param Direction value: The opposite direction
+        """
+        self._opposite = value
+
+
 class Location:
     # Disable 'Too few public methods'
     # pylint: disable=R0903
     """
     A location in an adventure game.
+
+    :param string name: The unique name of the location
+    :param string description: The description of the location
     """
     def __init__(self, name, description):
-        """
-        Creates a location.
-
-        :param string name: The unique name of the location
-        :param string description: The description of the location
-        """
         self._commands = []
         self._exits = []
         self._name = name
         self._description = description
 
-    def _add_exit(self, direction, location):
+    def add_exit(self, direction, location):
         # Disable 'Access to a protected member _run of a client class'
         # pylint: disable=W0212
         """
@@ -157,10 +246,10 @@ class Location:
         :param Location location: The location reached by going through
         the exit
         """
-        self._add_one_way_exit(direction, location)
-        location._add_one_way_exit(direction.opposite, self)
+        self.add_one_way_exit(direction, location)
+        location.add_one_way_exit(direction.opposite, self)
 
-    def _add_one_way_exit(self, direction, location):
+    def add_one_way_exit(self, direction, location):
         # Disable 'Access to a protected member _run of a client class'
         # pylint: disable=W0212
         """
@@ -173,9 +262,9 @@ class Location:
         :param Location location: The location reached by going through
         the exit
         """
-        self._exits.append(_Exit(direction.name, location))
-        exit_command = _Command(
-            direction.name, Game._move_player_to, location)
+        self._exits.append(Exit(direction, location))
+        exit_command = Command(
+            direction.name, Game._move_character_to, location)
         exit_command.add_synonym(direction.name[0])
         self._commands.append(exit_command)
 
@@ -199,6 +288,131 @@ class Location:
         The exits from the location.
         """
         return self._exits
+
+
+class Exit:
+    """
+    An exit from a location.
+
+    :param Direction direction: The direction in which the exit resides
+    :param Location to_location: The location to which the exit leads
+    """
+    def __init__(self, direction, to_location):
+        self._direction = direction
+        self._to_location = to_location
+
+    @property
+    def direction(self):
+        """
+        The direction in which the exit resides.
+
+        :return: The exit direction
+        :rtype: Direction
+        """
+        return self._direction
+
+    @property
+    def to_location(self):
+        """
+        The location to which the exit leads.
+
+        :return: The exit location
+        :rtype: Location
+        """
+        return self._to_location
+
+
+class PlayerCharacter:
+    # Disable 'Too few public methods'
+    # pylint: disable=R0903
+    """
+    A character within a game controlled by a player.
+
+    :param Location starting_location: The location in which the
+     character starts
+    """
+    def __init__(self, starting_location):
+        self._current_location = starting_location
+
+    @property
+    def current_location(self):
+        """
+        The current location in which the character resides.
+
+        :return: this character's current location
+        :rtype: Location
+        """
+        return self._current_location
+
+    def _move_to(self, location):
+        """
+        Moves the character to a location.
+
+        :param Location location: The location to which the character
+         will move
+        """
+        self._current_location = location
+
+
+class Command:
+    """
+    A command which can be given by a player.
+
+    A command can be activated using its name or one of its synonyms.
+
+    :param string name: The name of the command
+    :param function func: The function to be called when the command
+     is activated. This function must take two parameters, a
+     PlayerCharacter and a context
+    :param context: The context to be passed to func when it is called
+    """
+    def __init__(self, name, func, context):
+        self._name = name
+        self._synonyms = []
+        self._func = func
+        self._context = context
+
+    @property
+    def name(self):
+        """
+        The name of the command.
+
+        :return: name of the command
+        """
+        return self._name
+
+    def add_synonym(self, synonym):
+        """
+        Adds a synonym for the command.
+
+        :param string synonym: Alternative input which will activate
+         the command
+        """
+        self._synonyms.append(synonym)
+
+    def matches(self, value):
+        """
+        Returns whether or not an input value matches the command
+        name or one of its synonyms.
+
+        :param string value: The input value to check
+        :return: True if the value matches this command, False otherwise
+        :rtype: boolean
+        """
+        for synonym in self._synonyms:
+            if synonym == value:
+                return True
+
+        return self.name == value
+
+    def run(self, character):
+        """
+        Executes the command.
+
+        :param PlayerCharacter character: The player character for which to
+         execute the command
+        """
+        self._func(character, self._context)
 
 
 class GameFormatException(Exception):

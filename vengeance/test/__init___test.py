@@ -294,8 +294,7 @@ class InitTest(unittest.TestCase):
                      {'to': 'Room B', 'direction': 'down', 'one_way': True}
                  ]},
                 {'name': 'Room B',
-                 'description': 'B'
-                 }
+                 'description': 'B'}
             ]
         })
 
@@ -303,6 +302,112 @@ class InitTest(unittest.TestCase):
         self.assertEqual(1, len(room_a.exits))
         room_b = game.find_location('Room B')
         self.assertEqual(0, len(room_b.exits))
+
+    def test_two_way_exit(self):
+        game = vengeance.create_game({
+            'directions': [
+                {'name': 'up', 'opposite': 'down'},
+            ],
+            'rooms': [
+                {'name': 'Room A',
+                 'description': 'A',
+                 'exits': [
+                     {'to': 'Room B', 'direction': 'down'}
+                 ]},
+                {'name': 'Room B',
+                 'description': 'B'}
+            ]
+        })
+
+        room_a = game.find_location('Room A')
+        self.assertEqual(1, len(room_a.exits))
+        room_b = game.find_location('Room B')
+        self.assertEqual(1, len(room_b.exits))
+
+    def test_exit_location(self):
+        to_location_name = 'Room B'
+
+        game = vengeance.create_game({
+            'directions': [
+                {'name': 'up', 'opposite': 'down'},
+            ],
+            'rooms': [
+                {'name': 'Room A',
+                 'description': 'A',
+                 'exits': [
+                     {'to': to_location_name, 'direction': 'down'}
+                 ]},
+                {'name': to_location_name,
+                 'description': 'B'}
+            ]
+        })
+
+        exit = game.find_location('Room A').exits[0]
+        self.assertEqual(to_location_name, exit.to_location.name)
+
+    def test_exit_direction(self):
+        exit_direction = 'down'
+
+        game = vengeance.create_game({
+            'directions': [
+                {'name': 'up', 'opposite': exit_direction},
+            ],
+            'rooms': [
+                {'name': 'Room A',
+                 'description': 'A',
+                 'exits': [
+                     {'to': 'Room B', 'direction': exit_direction}
+                 ]},
+                {'name': 'Room B',
+                 'description': 'B'}
+            ]
+        })
+
+        exit = game.find_location('Room A').exits[0]
+        self.assertEqual(exit_direction, exit.direction.name)
+
+    def test_directions_have_initials_as_synonyms(self):
+        exit_direction = 'down'
+
+        game = vengeance.create_game({
+            'directions': [
+                {'name': 'up', 'opposite': exit_direction},
+            ],
+            'rooms': [
+                {'name': 'Room A',
+                 'description': 'A',
+                 'exits': [
+                     {'to': 'Room B', 'direction': exit_direction}
+                 ]},
+                {'name': 'Room B',
+                 'description': 'B'}
+            ]
+        })
+
+        command = game.find_command(exit_direction)
+        self.assertTrue(command.matches(exit_direction[0]))
+
+    def test_clashing_direction_synonyms_give_list(self):
+        game = vengeance.create_game({
+            'directions': [
+                {'name': 'south', 'opposite': 'north'},
+                {'name': 'southeast', 'opposite': 'northwest'}
+            ],
+            'rooms': [
+                {'name': 'Room A',
+                 'description': 'A',
+                 'exits': [
+                     {'to': 'Room B', 'direction': 'south'},
+                     {'to': 'Room B', 'direction': 'southeast'}
+                 ]},
+                {'name': 'Room B',
+                 'description': 'B'}
+            ]
+        })
+
+        commands = game.find_commands('s')
+        self.assertEqual(2, len(commands))
+
 
 if __name__ == '__main__':
     unittest.main()

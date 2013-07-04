@@ -1,7 +1,7 @@
 """
 Vengeance - text adventure game engine.
 """
-from vengeance._direction import _Direction
+from vengeance.game import Direction
 from vengeance.game import Game
 from vengeance.game import GameFormatException
 from vengeance.game import Location
@@ -63,8 +63,8 @@ def _create_directions(direction_data):
         opposite_key = _direction_opposite_key()
         _check_if_direction_is_reserved(reserved_word, opposite, opposite_key)
 
-        direction = _Direction(name)
-        opposite_direction = _Direction(opposite)
+        direction = Direction(name)
+        opposite_direction = Direction(opposite)
         direction.opposite = opposite_direction
         opposite_direction.opposite = direction
         directions.append(direction)
@@ -232,8 +232,6 @@ def _create_exit_data(room_data):
 
 
 def _add_exits(game, directions, exit_data):
-    # Disable 'Access to a protected member _run of a client class'
-    # pylint: disable=W0212
     """
     Adds exits to locations.
 
@@ -263,9 +261,9 @@ def _add_exits(game, directions, exit_data):
         one_way = datum['one_way']
         add_exit_func = None
         if one_way:
-            add_exit_func = Location._add_one_way_exit
+            add_exit_func = Location.add_one_way_exit
         else:
-            add_exit_func = Location._add_exit
+            add_exit_func = Location.add_exit
         add_exit_func(from_location, the_exit, to_location)
 
 
