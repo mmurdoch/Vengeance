@@ -43,6 +43,24 @@ class GameTest(unittest.TestCase):
     # def_test_find_command_includes_location_commands
 
 
+class DirectionTest(unittest.TestCase):
+    def test_setting_opposite(self):
+        east = Direction('east')
+        west = Direction('west')
+
+        east.opposite = west
+
+        self.assertEquals(west.name, east.opposite.name)
+
+    def test_setting_opposite_also_sets_reverse(self):
+        east = Direction('east')
+        west = Direction('west')
+
+        east.opposite = west
+
+        self.assertEquals(east.name, west.opposite.name)
+
+
 class LocationTest(unittest.TestCase):
     def test_name(self):
         name = 'a name'

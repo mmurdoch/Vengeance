@@ -203,19 +203,22 @@ class Direction(object):
         The opposite direction (as 'east' is to 'west',
         'in' is to 'out', etc.).
 
-        :return: The opposite direction
-        :rtype: Direction
+        :getter: Returns the direction's opposite direction
+        :setter: Sets the opposite direction of the direction and
+         also sets the direction as its opposite's opposite.
+        :type: Direction
         """
         return self._opposite
 
     @opposite.setter
     def opposite(self, value):
+        # Disable 'Access to a protected member _opposite of a client class'
+        # pylint: disable=W0212
         """
-        Sets the opposite direction.
-
-        :param Direction value: The opposite direction
+        See opposite property.
         """
         self._opposite = value
+        value._opposite = self
 
 
 class Location(object):
@@ -291,6 +294,9 @@ class Location(object):
     def exits(self):
         """
         The exits from the location.
+
+        :getter: Returns the location exits
+        :type: array of Exit objects
         """
         return self._exits
 
