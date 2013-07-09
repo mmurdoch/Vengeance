@@ -6,7 +6,7 @@ from __future__ import print_function
 import sys
 
 
-class Game:
+class Game(object):
     """
     An adventure game.
 
@@ -177,7 +177,7 @@ def _get_input():
     return raw_input()
 
 
-class Direction:
+class Direction(object):
     """
     A direction in which movement can be made.
 
@@ -218,7 +218,7 @@ class Direction:
         self._opposite = value
 
 
-class Location:
+class Location(object):
     # Disable 'Too few public methods'
     # pylint: disable=R0903
     """
@@ -295,7 +295,7 @@ class Location:
         return self._exits
 
 
-class Exit:
+class Exit(object):
     """
     An exit from a location.
 
@@ -321,13 +321,13 @@ class Exit:
         """
         The location to which the exit leads.
 
-        :return: The exit location
-        :rtype: Location
+        :getter: Returns the exit location
+        :type: Location
         """
         return self._to_location
 
 
-class PlayerCharacter:
+class PlayerCharacter(object):
     # Disable 'Too few public methods'
     # pylint: disable=R0903
     """
@@ -359,7 +359,7 @@ class PlayerCharacter:
         self._current_location = location
 
 
-class Command:
+class Command(object):
     """
     A command which can be given by a player.
 
