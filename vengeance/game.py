@@ -24,8 +24,8 @@ class Game:
         """
         The player's active character in the game.
 
-        :return: the active character
-        :rtype: PlayerCharacter
+        :getter: Returns the active character
+        :type: PlayerCharacter
         """
         return self._character
 
@@ -190,10 +190,10 @@ class Direction:
     @property
     def name(self):
         """
-        The unique name of the direction.
+        The name of the direction.
 
-        :return: The direction name
-        :rtype: string
+        :getter: Returns the direction's name
+        :type: string
         """
         return self._name
 
@@ -234,8 +234,6 @@ class Location:
         self._description = description
 
     def add_exit(self, direction, location):
-        # Disable 'Access to a protected member _run of a client class'
-        # pylint: disable=W0212
         """
         Adds an exit from the location.
 
@@ -250,7 +248,8 @@ class Location:
         location.add_one_way_exit(direction.opposite, self)
 
     def add_one_way_exit(self, direction, location):
-        # Disable 'Access to a protected member _run of a client class'
+        # Disable 'Access to a protected member _move_character_to of a
+        # client class'
         # pylint: disable=W0212
         """
         Adds a one-way exit from the location.
@@ -271,7 +270,10 @@ class Location:
     @property
     def name(self):
         """
-        The unique name of the location.
+        The name of the location.
+
+        :getter: Returns the location name
+        :type: string
         """
         return self._name
 
@@ -279,6 +281,9 @@ class Location:
     def description(self):
         """
         The description of the location.
+
+        :getter: Returns the location description
+        :type: string
         """
         return self._description
 
@@ -306,8 +311,8 @@ class Exit:
         """
         The direction in which the exit resides.
 
-        :return: The exit direction
-        :rtype: Direction
+        :getter: Returns the exit direction
+        :type: Direction
         """
         return self._direction
 
@@ -339,8 +344,8 @@ class PlayerCharacter:
         """
         The current location in which the character resides.
 
-        :return: this character's current location
-        :rtype: Location
+        :getter: Returns the character's current location
+        :type: Location
         """
         return self._current_location
 
@@ -377,7 +382,8 @@ class Command:
         """
         The name of the command.
 
-        :return: name of the command
+        :getter: Returns the name of the command
+        :type: string
         """
         return self._name
 
