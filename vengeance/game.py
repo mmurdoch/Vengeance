@@ -14,10 +14,15 @@ class Game(object):
      in the list is the one in which the player's character starts
     """
     def __init__(self, locations):
+        if not locations:
+            raise ValueError('locations must contain at least one location')
+
         self._locations = locations
         self._character = PlayerCharacter(locations[0])
         self._commands = []
-        self._add_command(Command("quit", Game._quit, self))
+        quit_command = Command('quit', Game._quit, self)
+        quit_command.add_synonym('q')
+        self._add_command(quit_command)
 
     @property
     def character(self):
@@ -57,7 +62,7 @@ class Game(object):
         :rtype: Command
         """
         found_commands = self.find_commands(command_name)
-        if len(found_commands) >= 1:
+        if len(found_commands) == 1:
             return found_commands[0]
 
         return None
@@ -230,7 +235,7 @@ class Location(object):
     :param string name: The unique name of the location
     :param string description: The description of the location
     """
-    def __init__(self, name, description):
+    def __init__(self, name, description=''):
         self._commands = []
         self._exits = []
         self._name = name

@@ -9,8 +9,7 @@ class GameTest(unittest.TestCase):
     def test_find_location(self):
         name = 'Arbitrary name'
         description = 'Arbitrary description'
-        locations = [Location(name, description)]
-        game = Game(locations)
+        game = Game([Location(name, description)])
 
         location = game.find_location(name)
 
@@ -18,8 +17,8 @@ class GameTest(unittest.TestCase):
 
     def test_first_location_is_character_start(self):
         first_location_name = 'one'
-        first_location = Location(first_location_name, 'one')
-        second_location = Location('two', 'two')
+        first_location = Location(first_location_name)
+        second_location = Location('two')
         game = Game([first_location, second_location])
 
         starting_location = game.character.current_location
@@ -27,8 +26,8 @@ class GameTest(unittest.TestCase):
         self.assertEqual(first_location_name, starting_location.name)
 
     def test_movement(self):
-        location_one = Location('L1', '')
-        location_two = Location('L2', '')
+        location_one = Location('L1')
+        location_two = Location('L2')
         location_one.add_one_way_exit(Direction('west'), location_two)
         game = Game([location_one, location_two])
 
@@ -36,11 +35,49 @@ class GameTest(unittest.TestCase):
 
         self.assertEqual('L2', game.character.current_location.name)
 
-    # def test_find_command_by_name
-    # def test_find_command_by_synonym
-    # def_test_find_clashing_command
-    # def_test_missing_command
-    # def_test_find_command_includes_location_commands
+    def test_find_game_command_by_name(self):
+        game = self._arbitrary_game()
+        quit_command_name = 'quit'
+
+        command = game.find_command(quit_command_name)
+
+        self.assertEqual(quit_command_name, command.name)
+
+    def test_find_game_command_by_synonym(self):
+        game = self._arbitrary_game()
+        quit_command_name = 'quit'
+
+        command = game.find_command(quit_command_name[0])
+
+        self.assertEqual(quit_command_name, command.name)
+
+    def test_missing_command(self):
+        game = self._arbitrary_game()
+
+        command = game.find_command('missing')
+
+        self.assertEqual(None, command)
+
+    def test_multiple_found_commands_return_none(self):
+        location_one = Location('L1')
+        location_two = Location('L2')
+        location_one.add_one_way_exit(Direction('quick'), location_two)
+        game = Game([location_one, location_two])
+
+        command = game.find_command('q')
+
+        self.assertEqual(None, command)
+
+    def test_no_locations_throws(self):
+        try:
+            Game([])
+            self.fail()
+        except ValueError:
+            # Success
+            pass
+
+    def _arbitrary_game(self):
+        return Game([Location('L1', '')])
 
 
 class DirectionTest(unittest.TestCase):
@@ -73,6 +110,11 @@ class LocationTest(unittest.TestCase):
         location = Location('arbitrary name', description)
 
         self.assertEqual(description, location.description)
+
+    def test_default_description_is_empty_string(self):
+        location = Location('arbitrary name')
+
+        self.assertEqual('', location.description)
 
 if __name__ == '__main__':
     unittest.main()
