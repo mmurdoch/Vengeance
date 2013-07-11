@@ -6,6 +6,144 @@ from __future__ import print_function
 import sys
 
 
+class Command(object):
+    """
+    A command which can be given by a player.
+
+    A command can be activated using its name or one of its synonyms.
+
+    :param string name: The name of the command
+    :param function func: The function to be called when the command
+     is activated. This function must take two parameters, a
+     PlayerCharacter and a context
+    :param context: The context to be passed to func when it is called
+    """
+    def __init__(self, name, func, context):
+        self._name = name
+        self._synonyms = []
+        self._func = func
+        self._context = context
+
+    @property
+    def name(self):
+        """
+        The name of the command.
+
+        :getter: Returns the name of the command
+        :type: string
+        """
+        return self._name
+
+    def add_synonym(self, synonym):
+        """
+        Adds a synonym for the command.
+
+        :param string synonym: Alternative input which will activate
+         the command
+        """
+        self._synonyms.append(synonym)
+
+    def matches(self, value):
+        """
+        Returns whether or not an input value matches the command
+        name or one of its synonyms.
+
+        :param string value: The input value to check
+        :return: True if the value matches this command, False otherwise
+        :rtype: boolean
+        """
+        for synonym in self._synonyms:
+            if synonym == value:
+                return True
+
+        return self.name == value
+
+    def run(self, character):
+        """
+        Executes the command.
+
+        :param PlayerCharacter character: The player character for which to
+         execute the command
+        """
+        self._func(character, self._context)
+
+
+class Direction(object):
+    """
+    A direction in which movement can be made.
+
+    :param string name: The unique name of the direction
+    """
+    def __init__(self, name):
+        self._name = name
+        self._opposite = None
+
+    @property
+    def name(self):
+        """
+        The name of the direction.
+
+        :getter: Returns the direction's name
+        :type: string
+        """
+        return self._name
+
+    @property
+    def opposite(self):
+        """
+        The opposite direction (as 'east' is to 'west',
+        'in' is to 'out', etc.).
+
+        :getter: Returns the direction's opposite direction
+        :setter: Sets the opposite direction of the direction and
+         also sets the direction as its opposite's opposite.
+        :type: Direction
+        """
+        return self._opposite
+
+    @opposite.setter
+    def opposite(self, value):
+        # Disable 'Access to a protected member _opposite of a client class'
+        # pylint: disable=W0212
+        """
+        See opposite property.
+        """
+        self._opposite = value
+        value._opposite = self
+
+
+class Exit(object):
+    """
+    An exit from a location.
+
+    :param Direction direction: The direction in which the exit resides
+    :param Location to_location: The location to which the exit leads
+    """
+    def __init__(self, direction, to_location):
+        self._direction = direction
+        self._to_location = to_location
+
+    @property
+    def direction(self):
+        """
+        The direction in which the exit resides.
+
+        :getter: Returns the exit direction
+        :type: Direction
+        """
+        return self._direction
+
+    @property
+    def to_location(self):
+        """
+        The location to which the exit leads.
+
+        :getter: Returns the exit location
+        :type: Location
+        """
+        return self._to_location
+
+
 class Game(object):
     """
     An adventure game.
@@ -156,6 +294,13 @@ class Game(object):
                 command.run(self)
 
 
+class GameFormatException(Exception):
+    """
+    Thrown when invalid game data is processed.
+    """
+    pass
+
+
 def _display_location(location):
     """
     Displays location information to the user.
@@ -180,50 +325,6 @@ def _get_input():
     Retrieves input from the user.
     """
     return raw_input()
-
-
-class Direction(object):
-    """
-    A direction in which movement can be made.
-
-    :param string name: The unique name of the direction
-    """
-    def __init__(self, name):
-        self._name = name
-        self._opposite = None
-
-    @property
-    def name(self):
-        """
-        The name of the direction.
-
-        :getter: Returns the direction's name
-        :type: string
-        """
-        return self._name
-
-    @property
-    def opposite(self):
-        """
-        The opposite direction (as 'east' is to 'west',
-        'in' is to 'out', etc.).
-
-        :getter: Returns the direction's opposite direction
-        :setter: Sets the opposite direction of the direction and
-         also sets the direction as its opposite's opposite.
-        :type: Direction
-        """
-        return self._opposite
-
-    @opposite.setter
-    def opposite(self, value):
-        # Disable 'Access to a protected member _opposite of a client class'
-        # pylint: disable=W0212
-        """
-        See opposite property.
-        """
-        self._opposite = value
-        value._opposite = self
 
 
 class Location(object):
@@ -306,38 +407,6 @@ class Location(object):
         return self._exits
 
 
-class Exit(object):
-    """
-    An exit from a location.
-
-    :param Direction direction: The direction in which the exit resides
-    :param Location to_location: The location to which the exit leads
-    """
-    def __init__(self, direction, to_location):
-        self._direction = direction
-        self._to_location = to_location
-
-    @property
-    def direction(self):
-        """
-        The direction in which the exit resides.
-
-        :getter: Returns the exit direction
-        :type: Direction
-        """
-        return self._direction
-
-    @property
-    def to_location(self):
-        """
-        The location to which the exit leads.
-
-        :getter: Returns the exit location
-        :type: Location
-        """
-        return self._to_location
-
-
 class PlayerCharacter(object):
     # Disable 'Too few public methods'
     # pylint: disable=R0903
@@ -368,72 +437,3 @@ class PlayerCharacter(object):
          will move
         """
         self._current_location = location
-
-
-class Command(object):
-    """
-    A command which can be given by a player.
-
-    A command can be activated using its name or one of its synonyms.
-
-    :param string name: The name of the command
-    :param function func: The function to be called when the command
-     is activated. This function must take two parameters, a
-     PlayerCharacter and a context
-    :param context: The context to be passed to func when it is called
-    """
-    def __init__(self, name, func, context):
-        self._name = name
-        self._synonyms = []
-        self._func = func
-        self._context = context
-
-    @property
-    def name(self):
-        """
-        The name of the command.
-
-        :getter: Returns the name of the command
-        :type: string
-        """
-        return self._name
-
-    def add_synonym(self, synonym):
-        """
-        Adds a synonym for the command.
-
-        :param string synonym: Alternative input which will activate
-         the command
-        """
-        self._synonyms.append(synonym)
-
-    def matches(self, value):
-        """
-        Returns whether or not an input value matches the command
-        name or one of its synonyms.
-
-        :param string value: The input value to check
-        :return: True if the value matches this command, False otherwise
-        :rtype: boolean
-        """
-        for synonym in self._synonyms:
-            if synonym == value:
-                return True
-
-        return self.name == value
-
-    def run(self, character):
-        """
-        Executes the command.
-
-        :param PlayerCharacter character: The player character for which to
-         execute the command
-        """
-        self._func(character, self._context)
-
-
-class GameFormatException(Exception):
-    """
-    Thrown when invalid game data is processed.
-    """
-    pass

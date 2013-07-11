@@ -5,6 +5,24 @@ from vengeance.game import Game
 from vengeance.game import Location
 
 
+class DirectionTest(unittest.TestCase):
+    def test_setting_opposite(self):
+        east = Direction('east')
+        west = Direction('west')
+
+        east.opposite = west
+
+        self.assertEquals(west.name, east.opposite.name)
+
+    def test_setting_opposite_also_sets_reverse(self):
+        east = Direction('east')
+        west = Direction('west')
+
+        east.opposite = west
+
+        self.assertEquals(east.name, west.opposite.name)
+
+
 class GameTest(unittest.TestCase):
     def test_find_location(self):
         name = 'Arbitrary name'
@@ -78,24 +96,6 @@ class GameTest(unittest.TestCase):
 
     def _arbitrary_game(self):
         return Game([Location('L1', '')])
-
-
-class DirectionTest(unittest.TestCase):
-    def test_setting_opposite(self):
-        east = Direction('east')
-        west = Direction('west')
-
-        east.opposite = west
-
-        self.assertEquals(west.name, east.opposite.name)
-
-    def test_setting_opposite_also_sets_reverse(self):
-        east = Direction('east')
-        west = Direction('west')
-
-        east.opposite = west
-
-        self.assertEquals(east.name, west.opposite.name)
 
 
 class LocationTest(unittest.TestCase):
