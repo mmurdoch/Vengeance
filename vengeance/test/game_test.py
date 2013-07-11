@@ -1,8 +1,33 @@
 import unittest
 
+from vengeance.game import Command
 from vengeance.game import Direction
 from vengeance.game import Game
 from vengeance.game import Location
+from vengeance.game import PlayerCharacter
+
+
+class CommandTest(unittest.TestCase):
+    def test_name_set_in_constructor(self):
+        arbitrary_name = 'name'
+        command = self._create_command(arbitrary_name)
+
+        self.assertEquals(arbitrary_name, command.name)
+
+    def test_func_called_by_run(self):
+        context = []
+        command = Command('name', _fake_func, context)
+
+        command.run(PlayerCharacter(Location('a')))
+
+        self.assertEquals('called', context[0])
+
+    def _create_command(self, name):
+        return Command(name, _fake_func, [])
+
+
+def _fake_func(character, context):
+    context.append('called')
 
 
 class DirectionTest(unittest.TestCase):
