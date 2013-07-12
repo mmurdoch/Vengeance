@@ -58,14 +58,13 @@ class Command(object):
 
         return self.name == value
 
-    def run(self, character):
+    def run(self, game):
         """
         Executes the command.
 
-        :param PlayerCharacter character: The player character for which to
-         execute the command
+        :param Game game: The game for which to execute the command
         """
-        self._func(character, self._context)
+        self._func(game, self._context)
 
 
 class Direction(object):
