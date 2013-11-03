@@ -283,14 +283,9 @@ class Game(object):
 
         :param string user_input: The input command to process
         """
-        for command in self._commands:
-            if command.matches(user_input):
-                command.run(self)
-
-        location = self._character.current_location
-        for command in location._commands:
-            if command.matches(user_input):
-                command.run(self)
+        command = self.find_command(user_input)
+        if command:
+            command.run(self)
 
 
 class GameFormatException(Exception):
