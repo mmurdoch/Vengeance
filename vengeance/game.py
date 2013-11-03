@@ -316,8 +316,6 @@ def _get_input():
 
 
 class Location(object):
-    # Disable 'Too few public methods'
-    # pylint: disable=R0903
     """
     A location in an adventure game.
 
