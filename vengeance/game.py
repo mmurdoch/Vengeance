@@ -272,8 +272,6 @@ class Game(object):
         pass
 
     def process_input(self, user_input):
-        # Disable 'Access to a protected member _commands of a client class'
-        # pylint: disable=W0212
         """
         Processes input from the user.
 
