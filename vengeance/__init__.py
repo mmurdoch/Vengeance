@@ -311,8 +311,6 @@ def create_game(game_data):
 
         return game
 
-    return None
-
 
 def run_game(game_data):
     # Disable 'Access to a protected member _run of a client class'
