@@ -21,12 +21,14 @@ rm -rf *
 cd ..
 cp -R sphinx/_build/html/* docs
 
-python vengeance/test/__init___test.py
+coverage run vengeance/test/__init___test.py
 if [ $? -ne 0 ]
     then echo 'Tests failed' && exit 1
 fi
 
-python vengeance/test/game_test.py
+coverage run -a vengeance/test/game_test.py
 if [ $? -ne 0 ]
     then echo 'Tests failed' && exit 1
 fi
+
+coverage html
