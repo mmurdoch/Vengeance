@@ -186,10 +186,6 @@ class Game(object):
         return None
 
     def find_command(self, command_name):
-        # Disable 'Access to a protected member _commands of a client class'
-        # Disable 'Access to a protected member _current_location of
-        # a client class'
-        # pylint: disable=W0212
         """
         Finds a command by name or synonym. The command is searched for
         within this game and the current location of the character.
