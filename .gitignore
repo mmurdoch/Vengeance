@@ -6,3 +6,4 @@ docs
 sphinx/_build
 Vengeance.egg-info
 .coverage
+htmlcov
