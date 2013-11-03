@@ -126,20 +126,43 @@ class GameTest(unittest.TestCase):
 class LocationTest(unittest.TestCase):
     def test_name(self):
         name = 'a name'
-        location = Location(name, 'arbitrary description')
+        location = Location(name, self.arbitrary_description)
 
         self.assertEqual(name, location.name)
 
     def test_description(self):
-        description = 'a description'
-        location = Location('arbitrary name', description)
+        description = self.arbitrary_description
+        location = Location(self.arbitrary_name, description)
 
         self.assertEqual(description, location.description)
 
     def test_default_description_is_empty_string(self):
-        location = Location('arbitrary name')
+        location = Location(self.arbitrary_name)
 
         self.assertEqual('', location.description)
+
+    def test_title_with_no_exits(self):
+        location = Location(self.arbitrary_name)
+
+        self.assertEqual(self.arbitrary_name + " (exits: <none>)",
+                         location.title)
+
+    def test_title_with_one_exit(self):
+        location = Location(self.arbitrary_name)
+
+        location.add_one_way_exit(Direction('north'), location)
+
+        self.assertEqual(self.arbitrary_name + " (exits: north)",
+                         location.title)
+
+    @property
+    def arbitrary_name(self):
+        return 'arbitrary name'
+
+    @property
+    def arbitrary_description(self):
+        return 'arbitrary description'
+
 
 if __name__ == '__main__':
     unittest.main()

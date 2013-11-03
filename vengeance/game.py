@@ -295,16 +295,7 @@ def _display_location(location):
 
     :param Location location: The location for which to display information
     """
-    title = location.name
-    title += " (exits: "
-    if len(location.exits) == 0:
-        title += "<none> "
-    for an_exit in location.exits:
-        title += an_exit.direction.name
-        title += " "
-    title += "\b"
-    title += ")"
-    print(title)
+    print(location.title)
     print(location.description)
 
 
@@ -381,6 +372,26 @@ class Location(object):
         :type: string
         """
         return self._description
+
+    @property
+    def title(self):
+        """
+        The title of the location.
+
+        :getter: Returns the location title
+        :type: string
+        """
+        title = self.name
+        title += " (exits: "
+        if len(self.exits) == 0:
+            title += "<none>"
+        for i in range(len(self.exits)):
+            an_exit = self.exits[i]
+            title += an_exit.direction.name
+            if i < len(self.exits)-1:
+                title += " "
+        title += ")"
+        return title
 
     @property
     def exits(self):
