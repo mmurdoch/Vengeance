@@ -389,7 +389,7 @@ class Location(object):
             an_exit = self.exits[i]
             title += an_exit.direction.name
             if i < len(self.exits)-1:
-                title += " "
+                title += ", "
         title += ")"
         return title
 

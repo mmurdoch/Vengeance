@@ -155,6 +155,15 @@ class LocationTest(unittest.TestCase):
         self.assertEqual(self.arbitrary_name + " (exits: north)",
                          location.title)
 
+    def test_title_with_two_exits(self):
+        location = Location(self.arbitrary_name)
+
+        location.add_one_way_exit(Direction('north'), location)
+        location.add_one_way_exit(Direction('south'), location)
+
+        self.assertEqual(self.arbitrary_name + " (exits: north, south)",
+                         location.title)
+
     @property
     def arbitrary_name(self):
         return 'arbitrary name'
