@@ -403,7 +403,7 @@ class Location(object):
         The exits from the location.
 
         :getter: Returns the location exits
-        :type: array of Exit objects
+        :type: list of Exit objects
         """
         return self._exits
 
