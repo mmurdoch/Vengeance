@@ -318,7 +318,7 @@ def run_game(game_data):
     """
     Runs a game.
 
-    :param dict game_data: Details of the rooms in the game
+    :param dict game_data: Details of the game
     :raises: ``GameFormatException`` if ``game_data`` is invalid
 
     ``game_data`` is a dictionary containing two key-value pairs, one with key
