@@ -350,7 +350,7 @@ class Location(object):
         The exit is two-way. It can be used both to move from
         the location to the connected location and also to move back.
 
-        :param direction: The direction in which the exit resides
+        :param Direction direction: The direction in which the exit resides
         :param Location location: The location reached by going through
         the exit
         """
@@ -367,7 +367,7 @@ class Location(object):
         The exit can only be used to move from the location to the
         connected location. It does not allow movement back again.
 
-        :param direction: The direction in which the exit resides
+        :param Direction direction: The direction in which the exit resides
         :param Location location: The location reached by going through
         the exit
         """
