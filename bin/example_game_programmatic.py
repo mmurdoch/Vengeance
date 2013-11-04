@@ -24,4 +24,8 @@ crypt.add_one_way_exit(go_in, coffin)
 crypt.add_exit(go_west, cave)
 
 game = Game([church, crypt, coffin, cave])
-game._run()
+
+# Move the player down from the church to the crypt
+game.process_input('d')
+
+game.run()
