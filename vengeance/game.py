@@ -403,9 +403,9 @@ class Location(object):
         The exits from the location.
 
         :getter: Returns the location exits
-        :type: list of Exit objects
+        :type: tuple of Exit objects
         """
-        return self._exits
+        return tuple(self._exits)
 
 
 class PlayerCharacter(object):
