@@ -260,7 +260,7 @@ class Game(object):
         """
         self._commands.append(command)
 
-    def _run(self):
+    def run(self):
         """
         Runs the game.
         """

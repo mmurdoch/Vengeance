@@ -313,8 +313,6 @@ def create_game(game_data):
 
 
 def run_game(game_data):
-    # Disable 'Access to a protected member _run of a client class'
-    # pylint: disable=W0212
     """
     Runs a game.
 
@@ -373,4 +371,4 @@ def run_game(game_data):
 
     """
     game = create_game(game_data)
-    game._run()
+    game.run()
