@@ -67,6 +67,31 @@ class Command(object):
         self._func(game, self._context)
 
 
+def render_location_default(location):
+    """
+    Converts a location to a default textual representation.
+
+    :param Location location: The location to render
+    :return: A textual representation of the location
+    :rtype: string
+    """
+    title = location.name
+    title += ' (exits: '
+    exit_count = len(location.exits)
+    if exit_count == 0:
+        title += '<none>'
+    for i in range(exit_count):
+        an_exit = location.exits[i]
+        title += an_exit.direction.name
+        if i < exit_count - 1:
+            title += ', '
+    title += ')'
+    if location.description:
+        title += '\n'
+        title += location.description
+    return title
+
+
 class Direction(object):
     """
     A direction in which movement can be made.
@@ -295,8 +320,7 @@ def _display_location(location):
 
     :param Location location: The location for which to display information
     """
-    print(location.title)
-    print(location.description)
+    print(render_location_default(location))
 
 
 def _get_input():
@@ -372,26 +396,6 @@ class Location(object):
         :type: string
         """
         return self._description
-
-    @property
-    def title(self):
-        """
-        The title of the location.
-
-        :getter: Returns the location title
-        :type: string
-        """
-        title = self.name
-        title += " (exits: "
-        if len(self.exits) == 0:
-            title += "<none>"
-        for i in range(len(self.exits)):
-            an_exit = self.exits[i]
-            title += an_exit.direction.name
-            if i < len(self.exits)-1:
-                title += ", "
-        title += ")"
-        return title
 
     @property
     def exits(self):
