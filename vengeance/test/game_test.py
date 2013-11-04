@@ -112,6 +112,18 @@ class GameTest(unittest.TestCase):
 
         self.assertEqual(None, command)
 
+    def test_find_location_command(self):
+        location_one = Location('L1')
+        location_two = Location('L2')
+        direction_command_name = 'north'
+        direction = Direction(direction_command_name)
+        location_one.add_one_way_exit(direction, location_two)
+        game = Game([location_one, location_two])
+
+        command = game.find_command('n')
+
+        self.assertEqual(direction_command_name, command.name)
+
     def test_no_locations_throws(self):
         try:
             Game([])
