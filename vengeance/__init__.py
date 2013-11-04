@@ -340,7 +340,8 @@ def run_game(game_data):
     room) and a ``'direction'`` key (the value of which must contain the
     ``'name'`` or ``'opposite'`` of a direction). Also, optionally, each
     dictionary may contain a ``'one_way'`` key, the value of which must be a
-    boolean (the default is ``False``).
+    boolean (if ``True`` the exit can only be traversed from the location, not
+    back again). The default is ``False``.
 
     Phew! An example might help::
 
