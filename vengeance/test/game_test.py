@@ -93,8 +93,14 @@ class GameTest(unittest.TestCase):
             # Success
             pass
 
-    def _arbitrary_game(self):
-        return Game([Location('L1', '')])
+    def _arbitrary_game(self, quit_called={}):
+        game = Game([Location('L1', '')])
+
+        def quit_handler(game):
+            quit_called['yes'] = True
+
+        game.quit_handler = quit_handler
+        return game
 
 
 class DefaultLocationRendererTest(unittest.TestCase):

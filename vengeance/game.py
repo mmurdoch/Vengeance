@@ -185,6 +185,7 @@ class Game(object):
         quit_command = _Command('quit', Game._quit, self)
         quit_command.add_synonym('q')
         self._add_command(quit_command)
+        self._quit_handler = self._default_quit_handler
 
     @property
     def character(self):
@@ -268,6 +269,25 @@ class Game(object):
             _display_location(self._character.current_location)
             self.process_input(_get_input())
 
+    @property
+    def quit_handler(self):
+        """
+        The function to be called when the game is requested to quit.
+
+        :getter: Returns the current quit handler
+        :setter: Sets the function to be called when quit is
+        requested. This function must take one parameter: a Game.
+        :type: function
+        """
+        return self._quit_handler
+
+    @quit_handler.setter
+    def quit_handler(self, value):
+        """
+        See quit_handler property.
+        """
+        self._quit_handler = value
+
     def _move_character_to(self, location):
         """
         Moves the character to a location.
@@ -282,8 +302,18 @@ class Game(object):
         """
         Interacts with the user to determine whether to quit the game.
 
-        context: The context in which the quit was initiated
+        :param _: The context in which the quit was initiated (ignored)
         """
+        self._quit_handler(self)
+
+    def _default_quit_handler(self, game):
+        """
+        Interacts with the user to determine whether to quit the game.
+
+        :param Game game: The game being quit
+        """
+        # Disable 'Unused argument 'game''
+        # pylint: disable=W0613
         print("Are you sure you want to quit?")
         quit_input = _get_input()
         if quit_input == "y" or quit_input == "yes":
