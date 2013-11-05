@@ -211,7 +211,7 @@ class Game(object):
 
         return None
 
-    def find_command(self, command_name):
+    def _find_command(self, command_name):
         """
         Finds a command by name or synonym. The command is searched for
         within this game and the current location of the character.
@@ -220,13 +220,13 @@ class Game(object):
         :return: the first matching command or None if not found
         :rtype: Command
         """
-        found_commands = self.find_commands(command_name)
+        found_commands = self._find_commands(command_name)
         if len(found_commands) == 1:
             return found_commands[0]
 
         return None
 
-    def find_commands(self, command_name):
+    def _find_commands(self, command_name):
         # Disable 'Access to a protected member _commands of a client class'
         # Disable 'Access to a protected member _current_location of
         # a client class'
@@ -332,7 +332,7 @@ class Game(object):
 
         :param string user_input: The input command to process
         """
-        command = self.find_command(user_input)
+        command = self._find_command(user_input)
         if command:
             command.run(self)
 

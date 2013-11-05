@@ -384,29 +384,9 @@ class InitTest(unittest.TestCase):
             ]
         })
 
-        command = game.find_command(exit_direction)
-        self.assertTrue(command.matches(exit_direction[0]))
+        game.process_input(exit_direction[0])
 
-    def test_clashing_direction_synonyms_give_list(self):
-        game = vengeance.create_game({
-            'directions': [
-                {'name': 'south', 'opposite': 'north'},
-                {'name': 'southeast', 'opposite': 'northwest'}
-            ],
-            'rooms': [
-                {'name': 'Room A',
-                 'description': 'A',
-                 'exits': [
-                     {'to': 'Room B', 'direction': 'south'},
-                     {'to': 'Room B', 'direction': 'southeast'}
-                 ]},
-                {'name': 'Room B',
-                 'description': 'B'}
-            ]
-        })
-
-        commands = game.find_commands('s')
-        self.assertEqual(2, len(commands))
+        self.assertEqual('Room B', game.character.current_location.name)
 
 
 if __name__ == '__main__':
