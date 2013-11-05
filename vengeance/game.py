@@ -6,7 +6,7 @@ from __future__ import print_function
 import sys
 
 
-class Command(object):
+class _Command(object):
     """
     A command which can be given by a player.
 
@@ -182,7 +182,7 @@ class Game(object):
         self._locations = locations
         self._character = PlayerCharacter(locations[0])
         self._commands = []
-        quit_command = Command('quit', Game._quit, self)
+        quit_command = _Command('quit', Game._quit, self)
         quit_command.add_synonym('q')
         self._add_command(quit_command)
 
@@ -372,7 +372,7 @@ class Location(object):
         the exit
         """
         self._exits.append(Exit(direction, location))
-        exit_command = Command(
+        exit_command = _Command(
             direction.name, Game._move_character_to, location)
         exit_command.add_synonym(direction.name[0])
         self._commands.append(exit_command)

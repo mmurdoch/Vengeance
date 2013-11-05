@@ -1,34 +1,10 @@
 import unittest
 
-from vengeance.game import Command
 from vengeance.game import render_location_default
 from vengeance.game import Direction
 from vengeance.game import Game
 from vengeance.game import Location
 from vengeance.game import PlayerCharacter
-
-
-class CommandTest(unittest.TestCase):
-    def test_name_set_in_constructor(self):
-        arbitrary_name = 'name'
-        command = self._create_command(arbitrary_name)
-
-        self.assertEquals(arbitrary_name, command.name)
-
-    def test_func_called_by_run(self):
-        context = []
-        command = Command('name', _fake_func, context)
-
-        command.run(PlayerCharacter(Location('a')))
-
-        self.assertEquals('called', context[0])
-
-    def _create_command(self, name):
-        return Command(name, _fake_func, [])
-
-
-def _fake_func(character, context):
-    context.append('called')
 
 
 class DirectionTest(unittest.TestCase):
@@ -79,50 +55,35 @@ class GameTest(unittest.TestCase):
 
         self.assertEqual('L2', game.character.current_location.name)
 
-    def test_find_game_command_by_name(self):
-        game = self._arbitrary_game()
+    def test_process_input_command_by_name(self):
+        quit_called = {'yes': False}
+        game = self._arbitrary_game(quit_called)
         quit_command_name = 'quit'
 
-        command = game.find_command(quit_command_name)
+        game.process_input(quit_command_name)
 
-        self.assertEqual(quit_command_name, command.name)
+        self.assertTrue(quit_called['yes'])
 
-    def test_find_game_command_by_synonym(self):
+    def test_process_input_command_by_synonym(self):
+        quit_called = {'yes': False}
+        game = self._arbitrary_game(quit_called)
+
+        game.process_input('q')
+
+        self.assertTrue(quit_called['yes'])
+
+    def test_unrecognised_input_ignored(self):
         game = self._arbitrary_game()
-        quit_command_name = 'quit'
 
-        command = game.find_command(quit_command_name[0])
+        game.process_input('unrecognised')
 
-        self.assertEqual(quit_command_name, command.name)
-
-    def test_missing_command(self):
-        game = self._arbitrary_game()
-
-        command = game.find_command('missing')
-
-        self.assertEqual(None, command)
-
-    def test_multiple_found_commands_return_none(self):
+    def test_process_input_matching_multiple_commands_ignored(self):
         location_one = Location('L1')
         location_two = Location('L2')
         location_one.add_one_way_exit(Direction('quick'), location_two)
         game = Game([location_one, location_two])
 
-        command = game.find_command('q')
-
-        self.assertEqual(None, command)
-
-    def test_find_location_command(self):
-        location_one = Location('L1')
-        location_two = Location('L2')
-        direction_command_name = 'north'
-        direction = Direction(direction_command_name)
-        location_one.add_one_way_exit(direction, location_two)
-        game = Game([location_one, location_two])
-
-        command = game.find_command('n')
-
-        self.assertEqual(direction_command_name, command.name)
+        game.process_input('q')
 
     def test_no_locations_throws(self):
         try:
