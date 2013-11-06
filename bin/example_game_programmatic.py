@@ -26,6 +26,8 @@ crypt.add_exit(go_west, cave)
 game = Game([church, crypt, coffin, cave])
 
 # Move the player down from the church to the crypt
+print("Current location: " + game.character.current_location.name)
 game.process_input('d')
+print("Current location: " + game.character.current_location.name)
 
 game.run()
