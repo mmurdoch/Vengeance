@@ -96,8 +96,9 @@ class GameTest(unittest.TestCase):
     def _arbitrary_game(self, quit_called={}):
         game = Game([Location('L1', '')])
 
-        def quit_handler(game):
+        def quit_handler():
             quit_called['yes'] = True
+            return True
 
         game.quit_handler = quit_handler
         return game

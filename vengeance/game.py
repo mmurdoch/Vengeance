@@ -3,8 +3,6 @@ Text adventure game engine.
 """
 from __future__ import print_function
 
-import sys
-
 
 class _Command(object):
     """
@@ -185,6 +183,7 @@ class Game(object):
         quit_command = _Command('quit', Game._quit, self)
         quit_command.add_synonym('q')
         self._add_command(quit_command)
+        self._should_quit = False
         self._quit_handler = _default_quit_handler
 
     @property
@@ -269,6 +268,9 @@ class Game(object):
             _display_location(self.character.current_location)
             self.process_input(_get_input())
 
+            if self._should_quit:
+                break
+
     @property
     def quit_handler(self):
         """
@@ -276,7 +278,8 @@ class Game(object):
 
         :getter: Returns the current quit handler
         :setter: Sets the function to be called when quit is
-        requested. This function must take one parameter: a Game.
+        requested. This function must take no parameters and
+        return a bool.
         :type: function
         """
         return self._quit_handler
@@ -304,7 +307,7 @@ class Game(object):
 
         :param _: The context in which the quit was initiated (ignored)
         """
-        self._quit_handler(self)
+        self._should_quit = self._quit_handler()
 
     def process_input(self, user_input):
         """
@@ -317,18 +320,19 @@ class Game(object):
             command.run(self)
 
 
-def _default_quit_handler(game):
+def _default_quit_handler():
     """
     Interacts with the user to determine whether to quit the game.
 
-    :param Game game: The game being quit
+    :return: True if the game should be quit, False otherwise
+    :rtype: bool
     """
-    # Disable 'Unused argument 'game''
-    # pylint: disable=W0613
     print("Are you sure you want to quit?")
     quit_input = _get_input()
     if quit_input == "y" or quit_input == "yes":
-        sys.exit()
+        return True
+
+    return False
 
 
 class GameFormatException(Exception):
