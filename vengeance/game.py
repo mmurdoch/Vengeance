@@ -185,7 +185,7 @@ class Game(object):
         quit_command = _Command('quit', Game._quit, self)
         quit_command.add_synonym('q')
         self._add_command(quit_command)
-        self._quit_handler = self._default_quit_handler
+        self._quit_handler = _default_quit_handler
 
     @property
     def character(self):
@@ -306,26 +306,6 @@ class Game(object):
         """
         self._quit_handler(self)
 
-    def _default_quit_handler(self, game):
-        """
-        Interacts with the user to determine whether to quit the game.
-
-        :param Game game: The game being quit
-        """
-        # Disable 'Unused argument 'game''
-        # pylint: disable=W0613
-        print("Are you sure you want to quit?")
-        quit_input = _get_input()
-        if quit_input == "y" or quit_input == "yes":
-            self._save()
-            sys.exit()
-
-    def _save(self):
-        """
-        Saves the game.
-        """
-        pass
-
     def process_input(self, user_input):
         """
         Processes input from the user.
@@ -335,6 +315,20 @@ class Game(object):
         command = self._find_command(user_input)
         if command:
             command.run(self)
+
+
+def _default_quit_handler(game):
+    """
+    Interacts with the user to determine whether to quit the game.
+
+    :param Game game: The game being quit
+    """
+    # Disable 'Unused argument 'game''
+    # pylint: disable=W0613
+    print("Are you sure you want to quit?")
+    quit_input = _get_input()
+    if quit_input == "y" or quit_input == "yes":
+        sys.exit()
 
 
 class GameFormatException(Exception):
