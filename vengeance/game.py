@@ -266,7 +266,7 @@ class Game(object):
         Runs the game.
         """
         while (True):
-            _display_location(self._character.current_location)
+            _display_location(self.character.current_location)
             self.process_input(_get_input())
 
     @property
