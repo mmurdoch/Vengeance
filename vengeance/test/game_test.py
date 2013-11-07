@@ -112,7 +112,7 @@ class GameTest(unittest.TestCase):
 
         game.input_handler = quit_input_provider
 
-        def quit_immediately():
+        def quit_immediately(display_handler, input_handler):
             return True
 
         game.quit_handler = quit_immediately
@@ -171,7 +171,7 @@ class GameTest(unittest.TestCase):
     def _arbitrary_game(self, quit_called={}):
         game = Game([Location('L1', '')])
 
-        def quit_handler():
+        def quit_handler(display_handler, input_handler):
             quit_called['yes'] = True
             return True
 

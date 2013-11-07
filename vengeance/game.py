@@ -321,9 +321,10 @@ class Game(object):
 
         :getter: Returns the current quit handler
         :setter: Sets the function to be called when quit is
-        requested. This function must take no parameters and
-        return a bool which returns True if the game should quit, or
-        False otherwise.
+        requested. This function must take a display_handler function (see
+        display_handler property) and an input_handler function (see
+        input_handler property) and return a bool which is True if the
+        game should quit, or False otherwise.
         :type: function
         """
         return self._handlers['quit']
@@ -351,7 +352,8 @@ class Game(object):
 
         :param _: The context in which the quit was initiated (ignored)
         """
-        self._should_quit = self.quit_handler()
+        self._should_quit = self.quit_handler(
+            self.display_handler, self.input_handler)
 
     def process_input(self, user_input):
         """
@@ -405,15 +407,19 @@ def _default_location_renderer(location):
     return title
 
 
-def _default_quit_handler():
+def _default_quit_handler(display_handler, input_handler):
     """
     Interacts with the user to determine whether to quit the game.
 
     :return: True if the game should be quit, False otherwise
+    :param function display_handler: A function for displaying text to the
+    user (see Game.display_handler)
+    :param function input_handler: A function for retrieving input from mthe
+    user (see Game.input_handler)
     :rtype: bool
     """
-    _default_display_handler("Are you sure you want to quit?")
-    quit_input = _default_input_handler()
+    display_handler("Are you sure you want to quit?")
+    quit_input = input_handler()
     if quit_input == "y" or quit_input == "yes":
         return True
 
