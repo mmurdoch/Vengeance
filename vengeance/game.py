@@ -12,8 +12,8 @@ class _Command(object):
 
     :param string name: The name of the command
     :param function func: The function to be called when the command
-     is activated. This function must take two parameters, a
-     PlayerCharacter and a context
+        is activated. This function must take two parameters, a
+        PlayerCharacter and a context
     :param context: The context to be passed to func when it is called
     """
     def __init__(self, name, func, context):
@@ -37,7 +37,7 @@ class _Command(object):
         Adds a synonym for the command.
 
         :param string synonym: Alternative input which will activate
-         the command
+            the command
         """
         self._synonyms.append(synonym)
 
@@ -93,7 +93,7 @@ class Direction(object):
 
         :getter: Returns the direction's opposite direction
         :setter: Sets the opposite direction of the direction and
-         also sets the direction as its opposite's opposite.
+            also sets the direction as its opposite's opposite.
         :type: Direction
         """
         return self._opposite
@@ -217,7 +217,7 @@ class Game(object):
         location of the character.
 
         :param string command_name: The name or synonym of the commands to
-         find
+            find
         :return: all matching commands
         :rtype: list
         """
@@ -237,7 +237,7 @@ class Game(object):
         """
         Adds a command to the game.
 
-        command: Command to add
+        :param _Command command: Command to add
         """
         self._commands.append(command)
 
@@ -417,9 +417,9 @@ def _default_quit_handler(display_handler, input_handler):
 
     :return: True if the game should be quit, False otherwise
     :param function display_handler: A function for displaying text to the
-    user (see Game.display_handler)
+        user (see Game.display_handler)
     :param function input_handler: A function for retrieving input from mthe
-    user (see Game.input_handler)
+        user (see Game.input_handler)
     :rtype: bool
     """
     display_handler("Are you sure you want to quit?")
@@ -522,7 +522,7 @@ class PlayerCharacter(object):
     A character within a game controlled by a player.
 
     :param Location starting_location: The location in which the
-     character starts
+        character starts
     """
     def __init__(self, starting_location):
         self._current_location = starting_location
@@ -542,6 +542,6 @@ class PlayerCharacter(object):
         Moves the character to a location.
 
         :param Location location: The location to which the character
-         will move
+            will move
         """
         self._current_location = location
