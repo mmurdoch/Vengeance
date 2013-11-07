@@ -1,3 +1,5 @@
+# Use case: Run a procedurally defined game
+# Example:
 from vengeance.game import Direction
 from vengeance.game import Game
 from vengeance.game import Location
@@ -24,10 +26,5 @@ crypt.add_one_way_exit(go_in, coffin)
 crypt.add_exit(go_west, cave)
 
 game = Game([church, crypt, coffin, cave])
-
-# Move the player down from the church to the crypt
-print("Current location: " + game.character.current_location.name)
-game.process_input('d')
-print("Current location: " + game.character.current_location.name)
 
 game.run()

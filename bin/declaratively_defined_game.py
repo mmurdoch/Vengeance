@@ -1,3 +1,5 @@
+# Use case: Run a declaratively defined game
+# Example:
 import vengeance
 
 vengeance.run_game({
