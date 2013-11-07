@@ -65,31 +65,6 @@ class _Command(object):
         self._func(game, self._context)
 
 
-def render_location_default(location):
-    """
-    Converts a location to a default textual representation.
-
-    :param Location location: The location to render
-    :return: A textual representation of the location
-    :rtype: string
-    """
-    title = location.name
-    title += ' (exits: '
-    exit_count = len(location.exits)
-    if exit_count == 0:
-        title += '<none>'
-    for i in range(exit_count):
-        an_exit = location.exits[i]
-        title += an_exit.direction.name
-        if i < exit_count - 1:
-            title += ', '
-    title += ')'
-    if location.description:
-        title += '\n'
-        title += location.description
-    return title
-
-
 class Direction(object):
     """
     A direction in which movement can be made.
@@ -183,8 +158,13 @@ class Game(object):
         quit_command = _Command('quit', Game._quit, self)
         quit_command.add_synonym('q')
         self._add_command(quit_command)
+        self._handlers = {
+            'display': _default_display_handler,
+            'input': _default_input_handler,
+            'location_renderer': _default_location_renderer,
+            'quit': _default_quit_handler
+        }
         self._should_quit = False
-        self._quit_handler = _default_quit_handler
 
     @property
     def character(self):
@@ -265,11 +245,74 @@ class Game(object):
         Runs the game.
         """
         while (True):
-            _display_location(self.character.current_location)
-            self.process_input(_get_input())
+            current_location = self.character.current_location
+            rendered_location = self.location_renderer(current_location)
+            self.display_handler(rendered_location)
+
+            user_input = self.input_handler()
+            self.process_input(user_input)
 
             if self._should_quit:
                 break
+
+    @property
+    def display_handler(self):
+        """
+        The function to be called for the game to display some text.
+
+        :getter: Returns the current displayer
+        :setter: Sets the function to be called when some text is to
+        be displayed. This function must take a string parameter (the text
+        to be displayed).
+        :type: function
+        """
+        return self._handlers['display']
+
+    @display_handler.setter
+    def display_handler(self, value):
+        """
+        See display_handler property.
+        """
+        self._handlers['display'] = value
+
+    @property
+    def input_handler(self):
+        """
+        The function to be called for the game to get input from the user.
+
+        :getter: Returns the current input handler
+        :setter: Sets the function to be called when input is required from
+        the user. This function must take no parameters and return a string
+        (the input).
+        """
+        return self._handlers['input']
+
+    @input_handler.setter
+    def input_handler(self, value):
+        """
+        See input_handler property.
+        """
+        self._handlers['input'] = value
+
+    @property
+    def location_renderer(self):
+        """
+        The function to be called when the game renders a location.
+
+        :getter: Returns the current location renderer
+        :setter: Sets the function to be called when a location is to
+        be rendered. This function must take a Location parameter and return
+        a string representation of the location.
+        :type: function
+        """
+        return self._handlers['location_renderer']
+
+    @location_renderer.setter
+    def location_renderer(self, value):
+        """
+        See location_renderer property.
+        """
+        self._handlers['location_renderer'] = value
 
     @property
     def quit_handler(self):
@@ -279,17 +322,18 @@ class Game(object):
         :getter: Returns the current quit handler
         :setter: Sets the function to be called when quit is
         requested. This function must take no parameters and
-        return a bool.
+        return a bool which returns True if the game should quit, or
+        False otherwise.
         :type: function
         """
-        return self._quit_handler
+        return self._handlers['quit']
 
     @quit_handler.setter
     def quit_handler(self, value):
         """
         See quit_handler property.
         """
-        self._quit_handler = value
+        self._handlers['quit'] = value
 
     def _move_character_to(self, location):
         """
@@ -307,7 +351,7 @@ class Game(object):
 
         :param _: The context in which the quit was initiated (ignored)
         """
-        self._should_quit = self._quit_handler()
+        self._should_quit = self.quit_handler()
 
     def process_input(self, user_input):
         """
@@ -320,6 +364,47 @@ class Game(object):
             command.run(self)
 
 
+def _default_display_handler(text):
+    """
+    Displays text to the user.
+
+    :param string text: The text to display
+    """
+    print(text)
+
+
+def _default_input_handler():
+    """
+    Retrieves input from the user.
+    """
+    return raw_input()
+
+
+def _default_location_renderer(location):
+    """
+    Converts a location to a default textual representation.
+
+    :param Location location: The location to render
+    :return: A textual representation of the location
+    :rtype: string
+    """
+    title = location.name
+    title += ' (exits: '
+    exit_count = len(location.exits)
+    if exit_count == 0:
+        title += '<none>'
+    for i in range(exit_count):
+        an_exit = location.exits[i]
+        title += an_exit.direction.name
+        if i < exit_count - 1:
+            title += ', '
+    title += ')'
+    if location.description:
+        title += '\n'
+        title += location.description
+    return title
+
+
 def _default_quit_handler():
     """
     Interacts with the user to determine whether to quit the game.
@@ -327,8 +412,8 @@ def _default_quit_handler():
     :return: True if the game should be quit, False otherwise
     :rtype: bool
     """
-    print("Are you sure you want to quit?")
-    quit_input = _get_input()
+    _default_display_handler("Are you sure you want to quit?")
+    quit_input = _default_input_handler()
     if quit_input == "y" or quit_input == "yes":
         return True
 
@@ -340,22 +425,6 @@ class GameFormatException(Exception):
     Thrown when invalid game data is processed.
     """
     pass
-
-
-def _display_location(location):
-    """
-    Displays location information to the user.
-
-    :param Location location: The location for which to display information
-    """
-    print(render_location_default(location))
-
-
-def _get_input():
-    """
-    Retrieves input from the user.
-    """
-    return raw_input()
 
 
 class Location(object):

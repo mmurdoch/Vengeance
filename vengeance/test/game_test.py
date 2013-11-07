@@ -1,6 +1,5 @@
 import unittest
 
-from vengeance.game import render_location_default
 from vengeance.game import Direction
 from vengeance.game import Game
 from vengeance.game import Location
@@ -93,6 +92,82 @@ class GameTest(unittest.TestCase):
             # Success
             pass
 
+    def test_run_renders_current_location(self):
+        game = self._arbitrary_game()
+
+        rendered_location = {}
+
+        def location_renderer(location):
+            rendered_location['location'] = location
+
+        game.location_renderer = location_renderer
+
+        def display_handler(text):
+            pass
+
+        game.display_handler = display_handler
+
+        def quit_input_provider():
+            return 'q'
+
+        game.input_handler = quit_input_provider
+
+        def quit_immediately():
+            return True
+
+        game.quit_handler = quit_immediately
+        game.run()
+
+        self.assertEqual(game.character.current_location.name,
+                         rendered_location['location'].name)
+
+    def test_render_with_no_exits(self):
+        location = Location(self.arbitrary_name)
+        game = Game([location])
+
+        self.assertEqual(self.arbitrary_name + " (exits: <none>)",
+                         self.render(game, location))
+
+    def test_render_with_one_exit(self):
+        location = Location(self.arbitrary_name)
+
+        location.add_one_way_exit(Direction('north'), location)
+
+        game = Game([location])
+
+        self.assertEqual(self.arbitrary_name + " (exits: north)",
+                         self.render(game, location))
+
+    def test_render_with_two_exits(self):
+        location = Location(self.arbitrary_name)
+
+        location.add_one_way_exit(Direction('north'), location)
+        location.add_one_way_exit(Direction('south'), location)
+
+        game = Game([location])
+
+        self.assertEqual(self.arbitrary_name + " (exits: north, south)",
+                         self.render(game, location))
+
+    def test_render_with_description(self):
+        location = Location(self.arbitrary_name, self.arbitrary_description)
+        game = Game([location])
+
+        self.assertEqual(self.arbitrary_name + " (exits: <none>)\n" +
+                         self.arbitrary_description,
+                         self.render(game, location))
+
+    def render(self, game, location):
+        return game.location_renderer(location)
+
+    @property
+    def arbitrary_name(self):
+        return 'arbitrary name'
+
+    @property
+    def arbitrary_description(self):
+        return 'arbitrary description'
+
     def _arbitrary_game(self, quit_called={}):
         game = Game([Location('L1', '')])
 
@@ -102,49 +177,6 @@ class GameTest(unittest.TestCase):
 
         game.quit_handler = quit_handler
         return game
-
-
-class DefaultLocationRendererTest(unittest.TestCase):
-    def test_render_with_no_exits(self):
-        location = Location(self.arbitrary_name)
-
-        self.assertEqual(self.arbitrary_name + " (exits: <none>)",
-                         self.render(location))
-
-    def test_render_with_one_exit(self):
-        location = Location(self.arbitrary_name)
-
-        location.add_one_way_exit(Direction('north'), location)
-
-        self.assertEqual(self.arbitrary_name + " (exits: north)",
-                         self.render(location))
-
-    def test_render_with_two_exits(self):
-        location = Location(self.arbitrary_name)
-
-        location.add_one_way_exit(Direction('north'), location)
-        location.add_one_way_exit(Direction('south'), location)
-
-        self.assertEqual(self.arbitrary_name + " (exits: north, south)",
-                         self.render(location))
-
-    def test_render_with_description(self):
-        location = Location(self.arbitrary_name, self.arbitrary_description)
-
-        self.assertEqual(self.arbitrary_name + " (exits: <none>)\n" +
-                         self.arbitrary_description,
-                         self.render(location))
-
-    def render(self, location):
-        return render_location_default(location)
-
-    @property
-    def arbitrary_name(self):
-        return 'arbitrary name'
-
-    @property
-    def arbitrary_description(self):
-        return 'arbitrary description'
 
 
 class LocationTest(unittest.TestCase):
