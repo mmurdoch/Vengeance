@@ -7,3 +7,4 @@ sphinx/_build
 Vengeance.egg-info
 .coverage
 htmlcov
+installed-files.txt

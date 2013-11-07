@@ -2,11 +2,11 @@ from setuptools import setup
 
 setup(
     name='Vengeance',
-    version='1.0.1',
+    version='1.1.0',
     author='Matthew Murdoch',
     author_email='matthew.murdoch.0@gmail.com',
     packages=['vengeance', 'vengeance.test'],
-    scripts=['bin/example_game.py'],
+    scripts=['bin/declaratively_defined_game.py', 'bin/procedurally_defined_game.py'],
     url='http://pypi.python.org/pypi/Vengeance/',
     license='LICENSE.txt',
     description='Text-based adventure game engine',

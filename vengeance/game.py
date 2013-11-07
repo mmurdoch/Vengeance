@@ -146,7 +146,8 @@ class Game(object):
     An adventure game.
 
     :param list locations: The locations in the game. The first location
-     in the list is the one in which the player's character starts
+        in the list is the one in which the player's character starts
+    :raises: ValueError if locations does not contain at least one location
     """
     def __init__(self, locations):
         if not locations:
@@ -258,12 +259,12 @@ class Game(object):
     @property
     def display_handler(self):
         """
-        The function to be called for the game to display some text.
+        The function to be called for the game to display some text. This
+        function takes a single string parameter (the text to be displayed).
 
         :getter: Returns the current display handler
         :setter: Sets the function to be called when some text is to
-        be displayed. This function must take a string parameter (the text
-        to be displayed).
+            be displayed.
         :type: function
         """
         return self._handlers['display']
@@ -279,11 +280,12 @@ class Game(object):
     def input_handler(self):
         """
         The function to be called for the game to get input from the user.
+        This function takes no parameters and returns a string (the input).
 
         :getter: Returns the current input handler
         :setter: Sets the function to be called when input is required from
-        the user. This function must take no parameters and return a string
-        (the input).
+            the user.
+        :type: function
         """
         return self._handlers['input']
 
@@ -297,12 +299,13 @@ class Game(object):
     @property
     def location_renderer(self):
         """
-        The function to be called when the game renders a location.
+        The function to be called when the game renders a location. This
+        function takes a single Location parameter and returns a string
+        representation of the location.
 
         :getter: Returns the current location renderer
         :setter: Sets the function to be called when a location is to
-        be rendered. This function must take a Location parameter and return
-        a string representation of the location.
+            be rendered.
         :type: function
         """
         return self._handlers['location_renderer']
@@ -317,14 +320,15 @@ class Game(object):
     @property
     def quit_handler(self):
         """
-        The function to be called when the game is requested to quit.
+        The function to be called when the game is requested to quit. This
+        function takes two parameters - a display_handler function (see
+        display_handler property) and an input_handler function (see
+        input_handler property) - and returns a bool which is True if the
+        game should quit, or False otherwise.
 
         :getter: Returns the current quit handler
         :setter: Sets the function to be called when quit is
-        requested. This function must take a display_handler function (see
-        display_handler property) and an input_handler function (see
-        input_handler property) and return a bool which is True if the
-        game should quit, or False otherwise.
+            requested.
         :type: function
         """
         return self._handlers['quit']
@@ -455,7 +459,7 @@ class Location(object):
 
         :param Direction direction: The direction in which the exit resides
         :param Location location: The location reached by going through
-        the exit
+            the exit
         """
         self.add_one_way_exit(direction, location)
         location.add_one_way_exit(direction.opposite, self)
@@ -472,7 +476,7 @@ class Location(object):
 
         :param Direction direction: The direction in which the exit resides
         :param Location location: The location reached by going through
-        the exit
+            the exit
         """
         self._exits.append(Exit(direction, location))
         exit_command = _Command(
