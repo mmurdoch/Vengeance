@@ -260,7 +260,7 @@ class Game(object):
         """
         The function to be called for the game to display some text.
 
-        :getter: Returns the current displayer
+        :getter: Returns the current display handler
         :setter: Sets the function to be called when some text is to
         be displayed. This function must take a string parameter (the text
         to be displayed).
