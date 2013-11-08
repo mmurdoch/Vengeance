@@ -293,7 +293,7 @@ def create_game(game_data):
     :param dict game_data: Details of the game (see run_game)
     :returns: Created game or None if ``game_data`` contains no rooms
     :rtype: Game
-    :raises: GameFormatException if ``game_data`` is invalid
+    :raises: ``GameFormatException`` if ``game_data`` is invalid
     """
     if not isinstance(game_data, dict):
         raise GameFormatException(u'game_data must be a dictionary')

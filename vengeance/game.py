@@ -147,7 +147,8 @@ class Game(object):
 
     :param list locations: The locations in the game. The first location
         in the list is the one in which the player's character starts
-    :raises: ValueError if locations does not contain at least one location
+    :raises: ``ValueError`` if locations does not contain at least one
+        location
     """
     def __init__(self, locations):
         if not locations:
