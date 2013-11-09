@@ -197,6 +197,18 @@ class LocationTest(unittest.TestCase):
 
         self.assertEqual('', location.description)
 
+    def test_add_exit_with_no_opposite_throws(self):
+        direction = Direction('up')
+        location1 = Location(self.arbitrary_name)
+        location2 = Location(self.arbitrary_name + '2')
+
+        try:
+            location1.add_exit(direction, location2)
+            self.fail()
+        except ValueError:
+            # Success
+            pass
+
     @property
     def arbitrary_name(self):
         return 'arbitrary name'

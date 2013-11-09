@@ -461,7 +461,11 @@ class Location(object):
         :param Direction direction: The direction in which the exit resides
         :param Location location: The location reached by going through
             the exit
+        :raises: ``ValueError`` if direction does not have an opposite
         """
+        if not direction.opposite:
+            raise ValueError('direction must have an opposite')
+
         self.add_one_way_exit(direction, location)
         location.add_one_way_exit(direction.opposite, self)
 

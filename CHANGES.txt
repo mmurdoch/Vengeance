@@ -1,3 +1,7 @@
+v1.1.1, 2013-11-xx
+
+* Fix issue #16 (Adding a location exit in a direction with no opposite throws an exception)
+
 v1.1.0, 2013-11-08
 
 * Correct release years in CHANGES.txt!
