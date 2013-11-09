@@ -149,12 +149,21 @@ class Game(object):
         in the list is the one in which the player's character starts
     :raises: ``ValueError`` if locations does not contain at least one
         location
+    :raises: ``ValueError`` if locations contains more than one location with
+        the same name
     """
     def __init__(self, locations):
         if not locations:
             raise ValueError('locations must contain at least one location')
 
-        self._locations = locations
+        self._locations = []
+        for location in locations:
+            if location.name in [l.name for l in self._locations]:
+                message = u'Redefinition of location named "{0}"'
+                raise ValueError(message.format(location.name))
+            else:
+                self._locations.append(location)
+
         self._character = PlayerCharacter(locations[0])
         self._commands = []
         quit_command = _Command('quit', Game._quit, self)

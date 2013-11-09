@@ -92,6 +92,17 @@ class GameTest(unittest.TestCase):
             # Success
             pass
 
+    def test_duplicate_locations_raises(self):
+        location_one = Location(self.arbitrary_name)
+        location_two = Location(self.arbitrary_name)
+
+        try:
+            Game([location_one, location_two])
+            self.fail()
+        except ValueError:
+            # Success
+            pass
+
     def test_run_renders_current_location(self):
         game = self._arbitrary_game()
 
