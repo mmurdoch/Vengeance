@@ -1,0 +1,6 @@
+git fetch origin
+git checkout next
+git merge master
+git checkout master
+git merge next
+git push origin master

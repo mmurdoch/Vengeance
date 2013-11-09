@@ -1,4 +1,4 @@
-v1.1.1, 2013-11-xx
+v1.1.1, 2013-11-09
 
 * Fix issue #16 (Adding a location exit in a direction with no opposite throws an exception)
 * Fix issue #20 (Game constructor should throw exception for redefined locations)
