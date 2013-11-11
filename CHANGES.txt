@@ -1,6 +1,7 @@
 v1.2.0, 2013-11-xx
 
 * Release into the public domain (replace MIT license with the Unlicense)
+* Add support for a game to have goals
 
 v1.1.1, 2013-11-09
 
