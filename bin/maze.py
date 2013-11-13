@@ -123,7 +123,7 @@ for x in range(width):
     locations_at_x = []
     location_grid.append(locations_at_x)
     for y in range(height):
-        locations_at_x.append(Location('' + str(x) + ', ' + str(y)))
+        locations_at_x.append(Location('Location ' + str(x) + ', ' + str(y)))
 
 # Pick a random starting location
 starting_x, starting_y = random_coords()
