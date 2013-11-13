@@ -6,8 +6,8 @@ from vengeance.game import Location
 
 import random
 
-width = 10
-height = 10
+width = 8
+height = 8
 north = Direction('north')
 south = Direction('south')
 north.opposite = south
@@ -34,13 +34,12 @@ def set_exits(x, y, location_grid, visited_locations):
     count = len(allowed_location_coords)
     if count == 0:
         if len(visited_locations) != 0:
-            new_visited_locations = list(visited_locations)
-            previous_location = new_visited_locations.pop()
+            previous_location = visited_locations.pop()
             for i in range(width):
                 for j in range(height):
                     current_location = location_grid[i][j]
                     if previous_location.name == current_location.name:
-                        set_exits(i, j, location_grid, new_visited_locations)
+                        set_exits(i, j, location_grid, visited_locations)
         return
 
     visited_locations.append(location)
