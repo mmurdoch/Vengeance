@@ -1,5 +1,5 @@
-# Use case: A randomly generated maze won when the user reaches the end
-# Example:
+# Use case: Ending a game when an appropriate state is reached
+# Example: A randomly generated maze won when the user reaches the end
 from vengeance.game import Direction
 from vengeance.game import Game
 from vengeance.game import Location
@@ -7,7 +7,7 @@ from vengeance.game import Location
 import random
 
 # The maze is generated recursively, setting these values
-# above 18 x 18 blows the stack
+# above 18 x 18 blows the stack!
 width = 10
 height = 10
 
@@ -19,26 +19,57 @@ east = Direction('east')
 west = Direction('west')
 east.opposite = west
 
-def set_exits(x, y, location_grid, visited_locations):
-    location = location_grid[x][y]
+def run_maze_game(maze):
+    """
+    Allows a user to move through a maze. They start at the bottom left
+    (0, 0) and win when they reach the top right.
+    """
+    game = Game(locations_from_maze(maze))
+
+    game.display_handler(render_maze(maze))
+
+    # The function which determines whether the game ending
+    # criteria have been met
+    def check_if_end_reached(game):
+        maze_end_location = maze[width-1][height-1]
+        if game.character.current_location.name == maze_end_location.name:
+            game.display_handler('You have reached the end. Well done!')
+            game.should_end = True
+
+    # Ensure that the game ending check happens at the end of
+    # each iteration of the game loop
+    game.end_of_round_handler = check_if_end_reached
+
+    game.run()
+
+def locations_from_maze(maze):
+    locations = []
+    for x in range(width):
+        for y in range(height):
+            locations.append(maze[x][y])
+
+    return locations
+
+def add_exits(x, y, maze, visited_locations):
+    location = maze[x][y]
 
     allowed_location_coords = []
-    if x in range(0, width-1) and not_visited(location_grid[x+1][y]):
+    if x in range(0, width-1) and not_visited(maze[x+1][y]):
         allowed_location_coords.append([x+1, y])
 
-    if x in range(1, width) and not_visited(location_grid[x-1][y]):
+    if x in range(1, width) and not_visited(maze[x-1][y]):
         allowed_location_coords.append([x-1, y])
 
-    if y in range(0, height-1) and not_visited(location_grid[x][y+1]):
+    if y in range(0, height-1) and not_visited(maze[x][y+1]):
         allowed_location_coords.append([x, y+1])
 
-    if y in range(1, height) and not_visited(location_grid[x][y-1]):
+    if y in range(1, height) and not_visited(maze[x][y-1]):
         allowed_location_coords.append([x, y-1])
 
     exit_count = len(allowed_location_coords)
     if exit_count == 0:
-        if backtracking(visited_locations):
-            backtrack(location_grid, visited_locations)
+        if can_backtrack(visited_locations):
+            backtrack(maze, visited_locations)
 
         return
 
@@ -47,7 +78,7 @@ def set_exits(x, y, location_grid, visited_locations):
 
     new_x = location_coords[0]
     new_y = location_coords[1]
-    new_location = location_grid[new_x][new_y]
+    new_location = maze[new_x][new_y]
 
     direction = None
     if new_x < x:
@@ -61,23 +92,23 @@ def set_exits(x, y, location_grid, visited_locations):
 
     location.add_exit(direction, new_location)
 
-    set_exits(new_x, new_y, location_grid, visited_locations)
+    add_exits(new_x, new_y, maze, visited_locations)
 
-def backtracking(visited_locations):
+def can_backtrack(visited_locations):
     return visited_locations
 
-def backtrack(location_grid, visited_locations):
+def backtrack(maze, visited_locations):
     previous_location = visited_locations.pop()
-    for i in range(width):
-        for j in range(height):
-            current_location = location_grid[i][j]
+    for x in range(width):
+        for y in range(height):
+            current_location = maze[x][y]
             if previous_location.name == current_location.name:
-                set_exits(i, j, location_grid, visited_locations)
+                add_exits(x, y, maze, visited_locations)
 
 def not_visited(location):
     return not location.exits
 
-def render_maze(location_grid):
+def render_maze(maze):
     result = ' ' + width * '_ '
     result += '\n'
 
@@ -85,13 +116,13 @@ def render_maze(location_grid):
         result += '|'
 
         for x in range(width):
-            location = location_grid[x][y]
-            if y == 0 or has_south_wall(location):
+            location = maze[x][y]
+            if y == 0 or has_wall_in_direction(location, south):
                 result += '_'
             else:
                 result += ' '
 
-            if x == width-1 or has_east_wall(location):
+            if x == width-1 or has_wall_in_direction(location, east):
                 result += '|'
             else:
                 result += ' '
@@ -100,16 +131,9 @@ def render_maze(location_grid):
 
     return result
 
-def has_south_wall(location):
+def has_wall_in_direction(location, direction):
     for exit in location.exits:
-        if exit.direction.name == south.name:
-            return False
-
-    return True
-
-def has_east_wall(location):
-    for exit in location.exits:
-        if exit.direction.name == east.name:
+        if exit.direction.name == direction.name:
             return False
 
     return True
@@ -117,27 +141,20 @@ def has_east_wall(location):
 def random_coords():
     return random.randrange(width), random.randrange(height)
 
-# Create maze (a grid of locations)
-location_grid = []
-for x in range(width):
-    locations_at_x = []
-    location_grid.append(locations_at_x)
-    for y in range(height):
-        locations_at_x.append(Location('Location ' + str(x) + ', ' + str(y)))
+def create_maze():
+    maze = []
+    for x in range(width):
+        locations_at_x = []
+        maze.append(locations_at_x)
+        for y in range(height):
+            location = Location('Location '+str(x)+', '+str(y))
+            locations_at_x.append(location)
 
-# Pick a random starting location
+    return maze
+
+maze = create_maze()
 starting_x, starting_y = random_coords()
-
 visited_locations = []
-set_exits(starting_x, starting_y, location_grid, visited_locations)
+add_exits(starting_x, starting_y, maze, visited_locations)
 
-print(render_maze(location_grid))
-
-locations = []
-for x in range(width):
-    for y in range(height):
-        locations.append(location_grid[x][y])
-
-game = Game(locations)
-
-game.run()
+run_maze_game(maze)

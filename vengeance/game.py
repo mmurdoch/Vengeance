@@ -173,9 +173,10 @@ class Game(object):
             'display': _default_display_handler,
             'input': _default_input_handler,
             'location_renderer': _default_location_renderer,
-            'quit': _default_quit_handler
+            'quit': _default_quit_handler,
+            'end_of_round': _default_end_of_round_handler
         }
-        self._should_quit = False
+        self._should_end = False
 
     @property
     def character(self):
@@ -263,8 +264,28 @@ class Game(object):
             user_input = self.input_handler()
             self.process_input(user_input)
 
-            if self._should_quit:
+            self.end_of_round_handler(self)
+
+            if self.should_end:
                 break
+
+    @property
+    def should_end(self):
+        """
+        Whether the game loop will stop at the end of its current iteration.
+
+        :getter: True if the game loop will stop, False otherwise
+        :setter: Sets whether or not the game loop will stop
+        :type: bool
+        """
+        return self._should_end
+
+    @should_end.setter
+    def should_end(self, value):
+        """
+        See should_end property.
+        """
+        self._should_end = value
 
     @property
     def display_handler(self):
@@ -350,6 +371,26 @@ class Game(object):
         """
         self._handlers['quit'] = value
 
+    @property
+    def end_of_round_handler(self):
+        """
+        The function to be called at the end of one iteration of the game
+        loop. This function takes a single Game parameter.
+
+        :getter: Returns the current end of round handler
+        :setter: Sets the function to be called at the end of each iteration
+            of the game loop
+        :type: function
+        """
+        return self._handlers['end_of_round']
+
+    @end_of_round_handler.setter
+    def end_of_round_handler(self, value):
+        """
+        See end_of_round_handler property.
+        """
+        self._handlers['end_of_round'] = value
+
     def _move_character_to(self, location):
         """
         Moves the character to a location.
@@ -366,7 +407,7 @@ class Game(object):
 
         :param _: The context in which the quit was initiated (ignored)
         """
-        self._should_quit = self.quit_handler(
+        self.should_end = self.quit_handler(
             self.display_handler, self.input_handler)
 
     def process_input(self, user_input):
@@ -438,6 +479,17 @@ def _default_quit_handler(display_handler, input_handler):
         return True
 
     return False
+
+
+def _default_end_of_round_handler(game):
+    # Disable 'Unused argument 'game''
+    # pylint: disable=W0613
+    """
+    Does nothing.
+
+    :param Game game: Ignored
+    """
+    pass
 
 
 class GameFormatException(Exception):
