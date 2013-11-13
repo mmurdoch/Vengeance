@@ -35,19 +35,15 @@ def set_exits(x, y, location_grid, visited_locations):
     if y in range(1, height) and not_visited(location_grid[x][y-1]):
         allowed_location_coords.append([x, y-1])
 
-    count = len(allowed_location_coords)
-    if count == 0:
-        if len(visited_locations) != 0:
-            previous_location = visited_locations.pop()
-            for i in range(width):
-                for j in range(height):
-                    current_location = location_grid[i][j]
-                    if previous_location.name == current_location.name:
-                        set_exits(i, j, location_grid, visited_locations)
+    exit_count = len(allowed_location_coords)
+    if exit_count == 0:
+        if backtracking(visited_locations):
+            backtrack(location_grid, visited_locations)
+
         return
 
     visited_locations.append(location)
-    location_coords = allowed_location_coords[random.randrange(count)]
+    location_coords = allowed_location_coords[random.randrange(exit_count)]
 
     new_x = location_coords[0]
     new_y = location_coords[1]
@@ -66,6 +62,17 @@ def set_exits(x, y, location_grid, visited_locations):
     location.add_exit(direction, new_location)
 
     set_exits(new_x, new_y, location_grid, visited_locations)
+
+def backtracking(visited_locations):
+    return visited_locations
+
+def backtrack(location_grid, visited_locations):
+    previous_location = visited_locations.pop()
+    for i in range(width):
+        for j in range(height):
+            current_location = location_grid[i][j]
+            if previous_location.name == current_location.name:
+                set_exits(i, j, location_grid, visited_locations)
 
 def not_visited(location):
     return not location.exits
