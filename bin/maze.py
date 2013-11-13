@@ -6,11 +6,15 @@ from vengeance.game import Location
 
 import random
 
-width = 8
-height = 8
+# The maze is generated recursively, setting these values
+# above 18 x 18 blows the stack
+width = 10
+height = 10
+
 north = Direction('north')
 south = Direction('south')
 north.opposite = south
+
 east = Direction('east')
 west = Direction('west')
 east.opposite = west
