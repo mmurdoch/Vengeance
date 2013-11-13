@@ -67,7 +67,7 @@ def not_visited(location):
     return not location.exits
 
 def render_maze(location_grid):
-    result = '.' + width * '_.'
+    result = ' ' + width * '_ '
     result += '\n'
 
     for y in range(height-1, -1, -1):
@@ -83,7 +83,7 @@ def render_maze(location_grid):
             if x == width-1 or has_east_wall(location):
                 result += '|'
             else:
-                result += '.'
+                result += ' '
 
         result += '\n'
 
