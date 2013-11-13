@@ -6,8 +6,8 @@ from vengeance.game import Location
 
 import random
 
-width = 4
-height = 4
+width = 10
+height = 10
 north = Direction('north')
 south = Direction('south')
 north.opposite = south
@@ -15,7 +15,7 @@ east = Direction('east')
 west = Direction('west')
 east.opposite = west
 
-def set_exits(x, y, location_grid):
+def set_exits(x, y, location_grid, visited_locations):
     location = location_grid[x][y]
 
     allowed_location_coords = []
@@ -33,8 +33,17 @@ def set_exits(x, y, location_grid):
 
     count = len(allowed_location_coords)
     if count == 0:
+        if len(visited_locations) != 0:
+            new_visited_locations = list(visited_locations)
+            previous_location = new_visited_locations.pop()
+            for i in range(width):
+                for j in range(height):
+                    current_location = location_grid[i][j]
+                    if previous_location.name == current_location.name:
+                        set_exits(i, j, location_grid, new_visited_locations)
         return
 
+    visited_locations.append(location)
     location_coords = allowed_location_coords[random.randrange(count)]
 
     new_x = location_coords[0]
@@ -53,10 +62,50 @@ def set_exits(x, y, location_grid):
 
     location.add_exit(direction, new_location)
 
-    set_exits(new_x, new_y, location_grid)
+    set_exits(new_x, new_y, location_grid, visited_locations)
 
 def not_visited(location):
     return not location.exits
+
+def render_maze(location_grid):
+    result = '.' + width * '_.'
+    result += '\n'
+
+    for y in range(height-1, -1, -1):
+        result += '|'
+
+        for x in range(width):
+            location = location_grid[x][y]
+            if y == 0 or has_south_wall(location):
+                result += '_'
+            else:
+                result += ' '
+
+            if x == width-1 or has_east_wall(location):
+                result += '|'
+            else:
+                result += '.'
+
+        result += '\n'
+
+    return result
+
+def has_south_wall(location):
+    for exit in location.exits:
+        if exit.direction.name == south.name:
+            return False
+
+    return True
+
+def has_east_wall(location):
+    for exit in location.exits:
+        if exit.direction.name == east.name:
+            return False
+
+    return True
+
+def random_coords():
+    return random.randrange(width), random.randrange(height)
 
 # Create maze (a grid of locations)
 location_grid = []
@@ -67,10 +116,12 @@ for x in range(width):
         locations_at_x.append(Location('' + str(x) + ', ' + str(y)))
 
 # Pick a random starting location
-starting_x = random.randrange(width)
-starting_y = random.randrange(height)
+starting_x, starting_y = random_coords()
 
-set_exits(starting_x, starting_y, location_grid)
+visited_locations = []
+set_exits(starting_x, starting_y, location_grid, visited_locations)
+
+print(render_maze(location_grid))
 
 locations = []
 for x in range(width):
