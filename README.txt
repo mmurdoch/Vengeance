@@ -23,6 +23,6 @@ To build, check, package, install and test Vengeance, run the ``test`` script:
 
 Examples
 ========
-See example game in ``bin/example_game.py``. This can be run simply with:
+See example game in ``bin/declaratively_defined_game.py``. This can be run simply with:
 
-    python bin/example_game.py
+    python bin/declaratively_defined_game.py

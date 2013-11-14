@@ -1,4 +1,8 @@
-v1.2.0, 2013-11-xx
+v1.2.1, 2013-11-14
+
+* Fix example in README.txt
+
+v1.2.0, 2013-11-14
 
 * Release into the public domain (replace MIT license with the Unlicense)
 * Add support for a game to end when an appropriate state is reached
