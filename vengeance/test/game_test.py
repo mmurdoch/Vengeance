@@ -171,6 +171,43 @@ class GameTest(unittest.TestCase):
     def render(self, game, location):
         return game.location_renderer(location)
 
+    def test_end_of_round_handler_called_at_end_of_game_loop_iteration(self):
+        game = self._no_interaction_single_loop_game()
+
+        end_of_round_handler_called = {}
+
+        def end_of_round_handler(game):
+            end_of_round_handler_called['yes'] = True
+
+        game.end_of_round_handler = end_of_round_handler
+
+        game.run()
+
+        self.assertTrue(end_of_round_handler_called['yes'])
+
+    def test_default_quit_handler_asks_for_confirmation(self):
+        game = Game([Location('L1')])
+
+        context = {'requested_quit': False}
+
+        def display_handler(text):
+            context['displayed'] = text
+
+        def input_handler():
+            if not context['requested_quit']:
+                context['requested_quit'] = True
+                return 'q'
+            else:
+                return 'y'
+
+        game.display_handler = display_handler
+        game.input_handler = input_handler
+
+        game.run()
+
+        self.assertEqual('Are you sure you want to quit?',
+                         context['displayed'])
+
     @property
     def arbitrary_name(self):
         return 'arbitrary name'
@@ -179,8 +216,23 @@ class GameTest(unittest.TestCase):
     def arbitrary_description(self):
         return 'arbitrary description'
 
+    def _no_interaction_single_loop_game(self):
+        game = self._arbitrary_game()
+
+        def no_display_handler(text):
+            pass
+
+        def no_input_handler():
+            return ''
+
+        game.display_handler = no_display_handler
+        game.input_handler = no_input_handler
+        game.should_end = True
+
+        return game
+
     def _arbitrary_game(self, quit_called={}):
-        game = Game([Location('L1', '')])
+        game = Game([Location('L1')])
 
         def quit_handler(display_handler, input_handler):
             quit_called['yes'] = True
