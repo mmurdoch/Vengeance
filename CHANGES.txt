@@ -5,6 +5,7 @@ v1.3.0, 2013-11-xx
 v1.2.2, 2013-11-15
 
 * Fix issue #26 (Make consistent use of Sphinx :return: in __init__.py)
+* Add unit tests for Game.end_of_round_handler, Game.should_end and default quit handler
 
 v1.2.1, 2013-11-14
 
