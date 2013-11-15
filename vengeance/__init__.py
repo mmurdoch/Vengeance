@@ -23,14 +23,14 @@ class _Struct:
 
 def _direction_name_key():
     """
-    :returns: The dictionary key for a direction name
+    :return: The dictionary key for a direction name
     """
     return 'name'
 
 
 def _direction_opposite_key():
     """
-    :returns: The dictionary key for a direction opposite
+    :return: The dictionary key for a direction opposite
     """
     return 'opposite'
 
@@ -140,7 +140,7 @@ def _create_rooms(room_data):
     Creates the rooms in the game.
 
     :param list room_data: Details of the rooms in the game
-    :returns: Created rooms
+    :return: Created rooms
     :rtype: list of rooms
     """
     rooms = []
@@ -291,7 +291,7 @@ def create_game(game_data):
     Creates a game.
 
     :param dict game_data: Details of the game (see run_game)
-    :returns: Created game or None if ``game_data`` contains no rooms
+    :return: Created game or None if ``game_data`` contains no rooms
     :rtype: Game
     :raises: ``GameFormatException`` if ``game_data`` is invalid
     """
