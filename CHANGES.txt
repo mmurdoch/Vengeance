@@ -1,3 +1,7 @@
+v1.3.0, 2013-11-xx
+
+* Add support for common directions (issue #28)
+
 v1.2.2, 2013-11-15
 
 * Fix issue #26 (Make consistent use of Sphinx :return: in __init__.py)
