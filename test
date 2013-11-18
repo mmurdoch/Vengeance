@@ -35,4 +35,9 @@ if [ $? -ne 0 ]
     then echo 'Tests failed' && exit 1
 fi
 
+coverage run -a vengeance/test/directions_test.py
+if [ $? -ne 0 ]
+    then echo 'Tests failed' && exit 1
+fi
+
 coverage html

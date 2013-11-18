@@ -1,5 +1,6 @@
 # Use case: Ending a game when an appropriate state is reached
 # Example: A randomly generated maze won when the user reaches the end
+from vengeance.directions import NORTH, SOUTH, EAST, WEST
 from vengeance.game import Direction
 from vengeance.game import Game
 from vengeance.game import Location
@@ -10,14 +11,6 @@ import random
 # above 18 x 18 blows the stack!
 width = 10
 height = 10
-
-north = Direction('north')
-south = Direction('south')
-north.opposite = south
-
-east = Direction('east')
-west = Direction('west')
-east.opposite = west
 
 def run_maze_game(maze):
     """
@@ -82,13 +75,13 @@ def add_exits(x, y, maze, visited_locations):
 
     direction = None
     if new_x < x:
-        direction = west
+        direction = WEST
     elif new_x > x:
-        direction = east
+        direction = EAST
     elif new_y < y:
-        direction = south
+        direction = SOUTH
     else:
-        direction = north
+        direction = NORTH
 
     location.add_exit(direction, new_location)
 
@@ -117,12 +110,12 @@ def render_maze(maze):
 
         for x in range(width):
             location = maze[x][y]
-            if y == 0 or has_wall_in_direction(location, south):
+            if y == 0 or has_wall_in_direction(location, SOUTH):
                 result += '_'
             else:
                 result += ' '
 
-            if x == width-1 or has_wall_in_direction(location, east):
+            if x == width-1 or has_wall_in_direction(location, EAST):
                 result += '|'
             else:
                 result += ' '

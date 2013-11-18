@@ -13,3 +13,8 @@ vengeance Package
     :members:
     :undoc-members:
     :show-inheritance:
+
+.. automodule:: vengeance.directions
+    :members:
+    :undoc-members:
+    :show-inheritance:
