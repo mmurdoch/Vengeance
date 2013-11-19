@@ -135,59 +135,59 @@ def _check_if_direction_is_reserved(reserved_word, to_check, to_check_key):
         raise GameFormatException(message.format(to_check_key, reserved_word))
 
 
-def _create_rooms(room_data):
+def _create_locations(location_data):
     """
-    Creates the rooms in the game.
+    Creates the locations in the game.
 
-    :param list room_data: Details of the rooms in the game
-    :return: Created rooms
-    :rtype: list of rooms
+    :param list location_data: Details of the locations in the game
+    :return: Created locations
+    :rtype: list of locations
     """
-    rooms = []
-    for room_datum in room_data:
-        if 'name' not in room_datum:
-            if 'description' not in room_datum:
+    locations = []
+    for location_datum in location_data:
+        if 'name' not in location_datum:
+            if 'description' not in location_datum:
                 message = u'Missing name and description from room'
                 raise GameFormatException(message)
             else:
-                description = room_datum['description']
+                description = location_datum['description']
                 message = u'Missing name from room with description "{0}"'
                 raise GameFormatException(message.format(description))
 
-        name = room_datum['name']
+        name = location_datum['name']
 
-        if 'description' not in room_datum:
+        if 'description' not in location_datum:
             message = u'Missing description from room with name "{0}"'
             raise GameFormatException(message.format(name))
 
         if not isinstance(name, str):
             raise GameFormatException(u'Room name must be a string')
 
-        if name in [r.name for r in rooms]:
+        if name in [r.name for r in locations]:
             message = u'Redefinition of room "{0}"'
             raise GameFormatException(message.format(name))
 
-        description = room_datum['description']
+        description = location_datum['description']
         if not isinstance(description, str):
             raise GameFormatException(u'Room description must be a string')
 
-        room = Location(name, description)
-        rooms.append(room)
+        location = Location(name, description)
+        locations.append(location)
 
-    return rooms
+    return locations
 
 
-def _create_exit_data(room_data):
+def _create_exit_data(location_data):
     """
     Creates exit data for the game.
 
-    room_data: Details of the rooms in the game
+    location_data: Details of the locations in the game
     """
     exit_data = []
-    for room_datum in room_data:
-        room_name = room_datum['name']
-        room_datum.setdefault('exits', [])
-        for current_exit in room_datum['exits']:
+    for location_datum in location_data:
+        location_name = location_datum['name']
+        location_datum.setdefault('exits', [])
+        for current_exit in location_datum['exits']:
             current_exit.setdefault('one_way', False)
 
             if 'to' not in current_exit:
@@ -195,21 +195,24 @@ def _create_exit_data(room_data):
                     if 'direction' not in current_exit:
                         message = u'Missing to room and direction from ' \
                                   u'exit from room "{0}"'
-                        raise GameFormatException(message.format(room_name))
+                        formatted_message = message.format(location_name)
+                        raise GameFormatException(formatted_message)
                 else:
                     message = u'Missing to room from exit with direction ' \
                               u'"{0}" from room "{1}"'
-                    raise GameFormatException(
-                        message.format(current_exit['direction'], room_name))
+                    direction_name = current_exit['direction']
+                    formatted_message = message.format(direction_name,
+                                                       location_name)
+                    raise GameFormatException(formatted_message)
 
             if 'direction' not in current_exit:
                 message = u'Missing direction from exit to room "{0}" ' \
                           u'from room "{1}"'
                 raise GameFormatException(
-                    message.format(current_exit['to'], room_name))
+                    message.format(current_exit['to'], location_name))
 
-            to_room = current_exit['to']
-            if not isinstance(to_room, str):
+            to_location = current_exit['to']
+            if not isinstance(to_location, str):
                 raise GameFormatException('Exit to room must be a string')
 
             direction = current_exit['direction']
@@ -221,8 +224,8 @@ def _create_exit_data(room_data):
                 raise GameFormatException('Exit one_way must be a boolean')
 
             exit_datum = {
-                'from': room_name,
-                'to': to_room,
+                'from': location_name,
+                'to': to_location,
                 'direction': direction,
                 'one_way': one_way
             }
@@ -267,23 +270,23 @@ def _add_exits(game, directions, exit_data):
         add_exit_func(from_location, the_exit, to_location)
 
 
-def _get_room_data(game_data):
+def _get_location_data(game_data):
     """
-    Retrieves room data.
+    Retrieves location data.
 
-    :param dict game_data: Details of the rooms in the game (see run_game)
-    :raises: GameFormatException if room data is invalid
+    :param dict game_data: Details of the locations in the game (see run_game)
+    :raises: GameFormatException if location data is invalid
     """
     if 'rooms' not in game_data:
         raise GameFormatException(u'Missing rooms list')
 
-    room_data = game_data['rooms']
+    location_data = game_data['rooms']
 
-    if len(room_data) == 0:
+    if len(location_data) == 0:
         message = u'Rooms list must contain at least one room'
         raise GameFormatException(message)
 
-    return room_data
+    return location_data
 
 
 def create_game(game_data):
@@ -303,10 +306,10 @@ def create_game(game_data):
 
     directions = _create_directions(game_data['directions'])
 
-    rooms = _create_rooms(_get_room_data(game_data))
-    if len(rooms) > 0:
-        game = Game(rooms)
-        exit_data = _create_exit_data(_get_room_data(game_data))
+    locations = _create_locations(_get_location_data(game_data))
+    if len(locations) > 0:
+        game = Game(locations)
+        exit_data = _create_exit_data(_get_location_data(game_data))
         _add_exits(game, directions, exit_data)
 
         return game
