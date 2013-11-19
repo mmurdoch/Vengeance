@@ -84,7 +84,7 @@ class GameTest(unittest.TestCase):
 
         game.process_input('q')
 
-    def test_no_locations_throws(self):
+    def test_no_locations_raises(self):
         try:
             Game([])
             self.fail()
@@ -260,7 +260,7 @@ class LocationTest(unittest.TestCase):
 
         self.assertEqual('', location.description)
 
-    def test_add_exit_with_no_opposite_throws(self):
+    def test_add_exit_with_no_opposite_raises(self):
         direction = Direction('up')
         location1 = Location(self.arbitrary_name)
         location2 = Location(self.arbitrary_name + '2')

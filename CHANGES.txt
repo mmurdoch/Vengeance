@@ -1,3 +1,7 @@
+v1.3.1, 2013-11-xx
+
+* Fix issue #25 (Replace use of 'throws' with 'raises')
+
 v1.3.0, 2013-11-xx
 
 * Add support for common directions (issue #28)
