@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='Vengeance',
-    version='1.3.0',
+    version='1.3.1',
     author='Matthew Murdoch',
     author_email='matthew.murdoch.0@gmail.com',
     packages=['vengeance', 'vengeance.test'],
