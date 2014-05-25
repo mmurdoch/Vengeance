@@ -1,7 +1,7 @@
 ========
 Vengeance
 ========
-Vengeance is a text-based adventure game engine created as an exercise in
+Vengeance is a text-based game engine created as an exercise in
 Python backward compatibility.
 
 Prerequisites
